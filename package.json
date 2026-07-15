@@ -1,0 +1,11 @@
+{
+  "name": "costplus-drug-portal",
+  "private": true,
+  "description": "Static member portal for the Cost Plus Drugs reimbursement program (Maverick Administrators). The site itself has no build step — this package only carries the test tooling.",
+  "scripts": {
+    "test": "node tests/tenant-parity.mjs && node tests/receipt-check.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.61.1"
+  }
+}
