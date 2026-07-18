@@ -8,7 +8,7 @@
 <link rel="icon" href="maverick-logo.png" type="image/png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..700;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..700;1,9..144,600&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   /* ===== Paper & Ink =====
      Two materials: INK (the navy administrator's world — hero, footer) and
@@ -25,9 +25,14 @@
     --radius-lg:20px; --radius-md:12px; --radius-sm:8px;
     --shadow-sm:0 1px 2px rgba(10,19,34,.06), 0 2px 10px rgba(10,19,34,.06);
     --shadow-md:0 8px 24px rgba(10,19,34,.14), 0 22px 50px rgba(10,19,34,.12);
+    /* Fraunces stays: its italic numerals are the site's signature. The two
+       workhorses are chosen for the paper world — Franklin (US forms and
+       newsprint) for text, Plex Mono (IBM typewriter lineage) for data. */
     --font-display:'Fraunces', Georgia, serif;
-    --font-ui:'Inter', system-ui, sans-serif;
-    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+    --font-ui:'Libre Franklin', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+    /* barely-there paper grain — documents only, never environments */
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
     /* focus ring: light steel on ink surfaces; deep accent on paper surfaces */
     --ring:#9AB8D0;
     /* one motion vocabulary, site-wide */
@@ -60,7 +65,6 @@
      content so the tear edge + belt stay visible at the fold. */
   .hero{position:relative;overflow:hidden;background:linear-gradient(165deg,var(--ink) 0%, var(--ink-2) 55%, var(--ink-3) 100%);color:#fff;padding:150px 0 110px;}
   .hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);pointer-events:none;}
-  .hero::after{content:"";position:absolute;top:-260px;left:-180px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(154,184,208,.13) 0%,transparent 62%);pointer-events:none;}
   .hero-tri{position:absolute;right:-70px;top:4%;width:560px;height:508px;pointer-events:none;}
 
   /* torn paper edge into the belt — the stub's perforation, at section scale */
@@ -77,19 +81,21 @@
     .trust{order:2;margin-top:30px;}
   }
 
-  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#A9C4DD;margin:0 0 26px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#A9C4DD;margin:0 0 26px;}
   .eyebrow::before{content:"";width:30px;height:1.5px;background:linear-gradient(90deg,var(--accent),transparent);}
   .eyebrow .mark{width:13px;height:11px;flex-shrink:0;}
 
   .hero h1{font-weight:600;font-size:clamp(38px,5.4vw,62px);line-height:1.1;letter-spacing:-.01em;margin-bottom:22px;}
-  /* the money words wear the gold — static, Fraunces italic */
-  .hero h1 .accent{font-style:italic;letter-spacing:-.005em;padding-right:.05em;background:linear-gradient(100deg,var(--gold) 0%,#F0D6AC 55%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  /* the money word gets stamped, not gradient-plated — receipts get stamps */
+  .hero h1 .accent{display:inline-block;font-style:italic;letter-spacing:-.005em;color:var(--gold-bright);padding:.01em .15em .07em;margin-left:.04em;border:2px solid rgba(217,168,103,.75);border-radius:10px;rotate:-2.2deg;}
   .hero-sub{color:#aab6c9;font-size:17.5px;line-height:1.65;max-width:52ch;margin:0 0 34px;}
 
-  .trust{display:grid;grid-template-columns:repeat(2,max-content);gap:16px 32px;margin-top:8px;}
-  .trust-item{display:flex;align-items:center;gap:10px;font-size:15px;color:#c3cddd;}
-  .trust-item .ic{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .trust-item svg{width:16px;height:16px;stroke:#9AB8D0;fill:none;stroke-width:2;}
+  /* trust items as the ticket's fine-print manifest — ruled mono line, not chips */
+  .trust{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin-top:8px;padding:15px 2px;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);max-width:640px;}
+  .trust-item{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#b9c4d6;}
+  .trust-item .ic{display:flex;flex-shrink:0;}
+  .trust-item svg{width:14px;height:14px;stroke:#9AB8D0;fill:none;stroke-width:2;}
+  .trust-item.reward{color:var(--gold-bright);}
   .trust-item.reward svg{stroke:var(--gold-bright);}
 
   @media (prefers-reduced-motion:no-preference){
@@ -100,13 +106,16 @@
     @keyframes rise{to{opacity:1;transform:translateY(0);}}
     .stub-lift.reveal{transform:translateY(26px) scale(.977);animation-name:card-rise;animation-duration:820ms;}
     @keyframes card-rise{to{opacity:1;transform:translateY(0) scale(1);}}
+    /* the stamp lands once the headline has settled */
+    .hero h1 .accent{opacity:0;animation:stamp-in 520ms var(--ease-spring) 780ms forwards;}
+    @keyframes stamp-in{0%{opacity:0;transform:scale(1.32) rotate(-5deg);}55%{opacity:1;}100%{opacity:1;transform:scale(1) rotate(0deg);}}
   }
 
   /* ===== Member access stub =====
      A paper object on the ink desk: ticket notches on the perforation line,
      a stapled margin, mono document header. Tears off on entry. */
   .stub-lift{position:relative;filter:drop-shadow(0 18px 38px rgba(0,0,0,.42)) drop-shadow(0 5px 12px rgba(0,0,0,.28));}
-  .card{--ring:var(--accent-deep);position:relative;background:var(--paper);border-radius:8px;padding:26px 30px 26px 54px;rotate:-1.2deg;transition:rotate var(--dur-med) var(--ease-out);
+  .card{--ring:var(--accent-deep);position:relative;background:var(--paper);background-image:var(--grain);border-radius:8px;padding:26px 30px 26px 54px;rotate:-1.2deg;transition:rotate var(--dur-med) var(--ease-out);
     mask-image:radial-gradient(circle at 26px 0, transparent 7px, #000 8px),radial-gradient(circle at 26px 100%, transparent 7px, #000 8px);
     -webkit-mask-image:radial-gradient(circle at 26px 0, transparent 7px, #000 8px),radial-gradient(circle at 26px 100%, transparent 7px, #000 8px);
     mask-composite:intersect;-webkit-mask-composite:source-in;}
@@ -118,7 +127,7 @@
     @keyframes tear-off{18%{translate:-5px 0;rotate:-2.4deg;opacity:1;}100%{translate:64px 44px;rotate:3deg;opacity:0;}}
   }
 
-  .card h2{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+  .card h2{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px;}
   .card h2 .mark{width:11px;height:9.5px;color:var(--accent);flex-shrink:0;}
   .card p.sub{color:var(--muted);font-size:15px;margin:0 0 20px;}
   .field{position:relative;margin-bottom:14px;}
@@ -173,7 +182,7 @@
   .belt{--ring:var(--accent-deep);background:linear-gradient(180deg,#ffffff 0%,#F2F5FA 100%);padding:88px 0 96px;}
   .belt-head{display:flex;align-items:center;gap:22px;margin:0 0 56px;}
   .belt-head::before,.belt-head::after{content:"";height:1px;flex:1;background:var(--line);}
-  .belt-head span{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+  .belt-head span{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
   .belt-grid{display:grid;grid-template-columns:repeat(3,1fr);}
   .belt-item{padding:6px 44px 0;border-left:1px solid var(--line);}
   .belt-item:first-child{padding-left:0;border-left:0;}
@@ -204,7 +213,7 @@
   .foot-desc{margin:24px 0 0;font-size:15px;line-height:1.75;color:#aab6c9;}
   .foot-desc strong{color:#e7ecf5;font-weight:600;}
   .foot-contact{text-align:right;flex-shrink:0;}
-  .foot-lbl{display:block;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#7c88a0;}
+  .foot-lbl{display:block;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7c88a0;}
   .foot-mail{display:inline-block;margin:12px 0 8px;font-family:var(--font-mono);font-size:15.5px;font-weight:500;letter-spacing:0;color:#DBE3EF;text-decoration:none;border-bottom:1px solid rgba(154,184,208,.45);padding-bottom:3px;transition:color var(--dur-fast) ease,border-color var(--dur-fast) ease;}
   .foot-mail:hover{color:#fff;border-color:#fff;}
   .foot-hint{display:block;font-size:13.5px;color:#7c88a0;}
@@ -216,13 +225,6 @@
     .foot-top{flex-direction:column;gap:36px;padding:52px 0 40px;}
     .foot-contact{text-align:left;}
     .foot-meta{flex-direction:column;align-items:flex-start;}
-  }
-
-  /* ===== Scroll reveal (belt & footer) ===== */
-  @media (prefers-reduced-motion:no-preference){
-    .fu{opacity:0;transform:translateY(20px);}
-    .fu.in{animation:fu 560ms var(--ease-out) forwards;}
-    @keyframes fu{to{opacity:1;transform:translateY(0);}}
   }
 
   /* ===== Transition wipe ===== */
@@ -251,9 +253,8 @@
     .eyebrow::before{width:22px;}
     .hero h1{font-size:36px;}
     .hero-sub{font-size:16px;line-height:1.62;margin-bottom:30px;}
-    .trust{grid-template-columns:1fr;gap:12px;}
-    .trust-item{font-size:14px;}
-    .trust-item .ic{width:30px;height:30px;}
+    .trust{flex-direction:column;align-items:flex-start;gap:11px;padding:14px 2px;}
+    .trust-item{font-size:11px;}
     .card{padding:22px 20px 22px 48px;}
     .card::before{width:22px;}
     .card{mask-image:radial-gradient(circle at 22px 0, transparent 6px, #000 7px),radial-gradient(circle at 22px 100%, transparent 6px, #000 7px);-webkit-mask-image:radial-gradient(circle at 22px 0, transparent 6px, #000 7px),radial-gradient(circle at 22px 100%, transparent 6px, #000 7px);}
@@ -327,20 +328,20 @@
 
 <section class="belt" aria-label="Your benefit at a glance">
   <div class="shell">
-    <p class="belt-head fu"><span>Your benefit at a glance</span></p>
+    <p class="belt-head"><span>Your benefit at a glance</span></p>
     <div class="belt-grid">
-      <article class="belt-item fu">
+      <article class="belt-item">
         <p class="belt-num">01</p>
         <h3>Fill your prescription</h3>
         <p>Order through Mark Cuban&rsquo;s Cost Plus Drugs, where generic medications cost a fraction of retail price.</p>
         <a class="belt-link" href="https://costplusdrugs.com" target="_blank" rel="noopener">See real prices at costplusdrugs.com <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
       </article>
-      <article class="belt-item fu">
+      <article class="belt-item">
         <p class="belt-num">02</p>
         <h3>Submit your receipt</h3>
         <p>Upload your Cost Plus order confirmation through Maverick&rsquo;s secure claim form &mdash; no paper forms, no mailing anything.</p>
       </article>
-      <article class="belt-item reward fu">
+      <article class="belt-item reward">
         <p class="belt-num">03</p>
         <h3>Get paid back</h3>
         <p>100% of your prescription and shipping cost reimbursed, plus a 10% savings reward &mdash; <strong>up to $50 per fill</strong>.</p>
@@ -352,11 +353,11 @@
 <footer class="site-foot">
   <div class="shell">
     <div class="foot-top">
-      <div class="foot-brand fu">
+      <div class="foot-brand">
         <span class="brand-plate"><img src="maverick-logo.png" alt="Maverick Administrators" /></span>
         <p class="foot-desc">The <strong>Cost Plus Drugs Member Program</strong> is a prescription savings benefit administered by <strong>Maverick Administrators</strong> &mdash; fill your prescription at Cost Plus prices, submit your receipt, and get paid back.</p>
       </div>
-      <div class="foot-contact fu">
+      <div class="foot-contact">
         <span class="foot-lbl">Questions about your benefit?</span>
         <a class="foot-mail" href="mailto:support@mavericktpa.com">support@mavericktpa.com</a>
         <span class="foot-hint">or contact your HR department</span>
@@ -450,26 +451,6 @@
     wipe.classList.add('active');
     setTimeout(function(){ window.location.href = slug + '.html'; }, 560);
   }
-
-  // Reveal-on-scroll for the belt + footer
-  (function(){
-    var els = document.querySelectorAll('.fu');
-    if(!els.length) return;
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)){
-      els.forEach(function(el){ el.classList.add('in'); });
-      return;
-    }
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en, i){
-        if(en.isIntersecting){
-          en.target.style.animationDelay = (i % 4) * 90 + 'ms';
-          en.target.classList.add('in');
-          io.unobserve(en.target);
-        }
-      });
-    }, { threshold: .15 });
-    els.forEach(function(el){ io.observe(el); });
-  })();
 
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>

@@ -7,7 +7,7 @@
 <link rel="icon" href="maverick-logo.png" type="image/png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..700;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..700;1,9..144,600&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
     --ink:#0B1322; --ink-2:#0F1B30; --ink-3:#16243D; --sidebar:#0E192A; --sidebar-active:#16243D;
@@ -20,9 +20,18 @@
     --shadow-sm:0 1px 2px rgba(10,19,34,.05), 0 2px 8px rgba(10,19,34,.05);
     --shadow-md:0 10px 26px -6px rgba(10,19,34,.16), 0 4px 10px rgba(10,19,34,.06);
     --shadow-lift:0 16px 36px -8px rgba(10,19,34,.22), 0 6px 14px rgba(10,19,34,.08);
+    /* Fraunces stays: its italic numerals are the site's signature. The two
+       workhorses are chosen for the paper world — Franklin (US forms and
+       newsprint) for text, Plex Mono (IBM typewriter lineage) for data. */
     --font-display:'Fraunces', Georgia, serif;
-    --font-ui:'Inter', system-ui, sans-serif;
-    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+    --font-ui:'Libre Franklin', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+    /* gold for small text on paper — deep enough to hold 4.5:1 */
+    --gold-ink:#8A6437;
+    /* barely-there paper grain — documents only, never environments */
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    /* type scale — one set of sizes, referenced everywhere */
+    --t-title:clamp(30px,3.6vw,42px); --t-sub:16px; --t-h3:22px; --t-body:15px; --t-small:13.5px; --t-label:12px;
     /* one motion vocabulary, site-wide */
     --ease-out:cubic-bezier(.16,1,.3,1);
     --ease-spring:cubic-bezier(.34,1.56,.64,1);
@@ -30,11 +39,13 @@
   }
   *,*::before,*::after{box-sizing:border-box;}
   html{scroll-behavior:smooth;scroll-padding-top:100px;}
-  body{margin:0;font-family:var(--font-ui);color:var(--text);background:linear-gradient(180deg,#ECEFF4 0%, color-mix(in srgb, var(--accent) 6%, #E9EDF2) 45%, #E7EBF1 100%);-webkit-font-smoothing:antialiased;line-height:1.6;}
+  /* the desk is neutral — the tenant accent is ink on the documents, never
+     ambient light in the room */
+  body{margin:0;font-family:var(--font-ui);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.6;}
   h1,h2,h3{font-family:var(--font-display);margin:0;}
   :focus-visible{outline:2px solid var(--ring,var(--accent-deep));outline-offset:2px;border-radius:6px;}
   /* light steel ring on ink surfaces, deep accent on light ones */
-  .arrive,section.sec--dark,.sidebar,footer.site,.stat-card{--ring:color-mix(in srgb, var(--accent) 55%, #fff);}
+  .arrive,section.sec--dark,.sidebar,footer.site{--ring:color-mix(in srgb, var(--accent) 55%, #fff);}
   a{color:inherit;}
 
   /* ===== Scroll progress ===== */
@@ -68,7 +79,7 @@
   /* ===== Layout ===== */
   .layout{max-width:1440px;margin:0 auto;display:flex;align-items:flex-start;}
   .sidebar{position:sticky;top:65px;width:264px;flex-shrink:0;height:calc(100vh - 65px);background:var(--sidebar);color:#e7ecf5;padding:28px 18px;display:flex;flex-direction:column;overflow-y:auto;}
-  .sb-label{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#5d6b82;padding:0 12px;margin:0 0 12px;}
+  .sb-label{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#5d6b82;padding:0 12px;margin:0 0 12px;}
   .sb-nav{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;position:relative;}
   .sb-item{position:relative;}
   .sb-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:#9aa8bf;text-decoration:none;font-size:14px;font-weight:500;position:relative;z-index:1;transition:color var(--dur-fast) ease, transform var(--dur-med) var(--ease-out);}
@@ -87,47 +98,60 @@
   .content{flex:1;min-width:0;padding:28px 36px 0;}
   .content-inner{max-width:none;}
 
-  /* ===== Canvas worlds =====
-     Every section commits to its own composed canvas — dark arrival, tinted
-     atmosphere, crisp panel, dark finale — instead of stacking on gray.
+  /* ===== The continuous form =====
+     The four working chapters are pages of ONE document — a continuous-feed
+     form. The .form-run wrapper is the paper; sections are transparent;
+     between pages sit perforated fold lines with punched edge notches. The
+     ink bookends (.arrive, .sec--finale) stay their own dark sheets.
      Canvas-level custom props (--tc title, --mc muted, --hair rules,
      --flow-tile) retheme the components inside without one-off colors. */
-  section.sec{position:relative;overflow:hidden;border-radius:28px;padding:64px 56px 72px;margin-bottom:0;scroll-margin-top:96px;--tc:var(--text);--mc:var(--muted);--hair:var(--line);}
-  .sec--tint{background:linear-gradient(165deg, color-mix(in srgb, var(--accent) 11%, #fff) 0%, color-mix(in srgb, var(--accent) 5%, #F4F7FB) 55%, #ffffff 100%);border:1px solid color-mix(in srgb, var(--accent) 16%, transparent);box-shadow:var(--shadow-md);}
-  .sec--tint::after{content:"";position:absolute;inset:0;background:radial-gradient(640px 420px at 92% -12%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%);pointer-events:none;}
-  .sec--tint.sec--mirror::after{background:radial-gradient(640px 420px at -12% -12%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%);}
-  .sec--panel{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow-sm);}
-  section.sec--dark{background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);--tc:#fff;--mc:#a9bad2;--hair:rgba(255,255,255,.13);--flow-tile:rgba(255,255,255,.07);box-shadow:var(--shadow-lift);}
+  section.sec{position:relative;padding:64px 56px 72px;margin-bottom:0;scroll-margin-top:96px;--tc:var(--text);--mc:var(--muted);--hair:var(--line);}
+  .form-run{position:relative;background:var(--paper);background-image:var(--grain);border:1px solid var(--line);border-radius:12px 12px 2px 2px;box-shadow:var(--shadow-sm);}
+  /* the last page tears off toward the ink finale — where the money is */
+  .run-tear{height:11px;margin-top:-1px;background-image:linear-gradient(135deg,var(--paper) 50%,transparent 50%),linear-gradient(-135deg,var(--paper) 50%,transparent 50%);background-size:16px 11px;background-repeat:repeat-x;filter:drop-shadow(0 3px 2px rgba(10,19,34,.12));}
+  section.sec--dark{overflow:hidden;border-radius:20px;background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);--tc:#fff;--mc:#a9bad2;--hair:rgba(255,255,255,.13);--flow-tile:rgba(255,255,255,.07);box-shadow:var(--shadow-lift);}
   .sec--dark::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);pointer-events:none;}
-  .sec--dark::after{content:"";position:absolute;inset:0;background:radial-gradient(620px 420px at 88% -10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%), radial-gradient(520px 380px at -10% 110%, rgba(0,31,67,.55), transparent 70%);pointer-events:none;}
-  /* the money finale earns its gold ambience — plus a hairline gold crest */
-  section.sec--finale::after{background:radial-gradient(560px 380px at 88% -8%, rgba(217,168,103,.18), transparent 70%), radial-gradient(560px 400px at -10% 110%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 70%);}
+  /* the money finale earns its hairline gold crest — a printed rule, not a glow */
   section.sec--finale{box-shadow:inset 0 1px 0 rgba(217,168,103,.4), var(--shadow-lift);margin-bottom:32px;}
   .sec > *{position:relative;z-index:1;}
 
-  /* joint — the stitch between sections: a quiet accent thread that makes the
-     five cards read as chapters of one page rather than a stacked deck */
-  .joint{height:64px;display:flex;align-items:center;justify-content:center;}
-  .joint::before{content:"";width:1.5px;height:100%;background:linear-gradient(180deg,transparent 0%, color-mix(in srgb, var(--accent) 42%, transparent) 30%, color-mix(in srgb, var(--accent) 42%, transparent) 70%, transparent 100%);}
+  /* fold — the perforated fold line between pages of the continuous form:
+     dashed rule, punched notches at both edges, drawn in as you reach it */
+  .fold{position:relative;height:56px;background:var(--paper);background-image:var(--grain);}
+  .fold::before{content:"";position:absolute;left:26px;right:26px;top:50%;border-top:1.5px dashed #C7CFDC;}
+  .fold::after{content:"";position:absolute;inset:0 -1px;pointer-events:none;background:radial-gradient(circle 7.5px at 0 50%, var(--bg) 5.5px, var(--line) 6px 6.75px, transparent 7.5px) no-repeat, radial-gradient(circle 7.5px at 100% 50%, var(--bg) 5.5px, var(--line) 6px 6.75px, transparent 7.5px) no-repeat;}
   @media (prefers-reduced-motion:no-preference){
-    .joint::before{transform:scaleY(.25);transform-origin:top;transition:transform 700ms var(--ease-out);}
-    .joint.in::before{transform:scaleY(1);}
+    .fold::before{transform:scaleX(0);transform-origin:left center;transition:transform 800ms var(--ease-out);}
+    .fold.in::before{transform:scaleX(1);}
   }
+  .gap{height:44px;}
 
   /* ===== Arrival — continues the landing hero's world into the portal ===== */
-  .arrive{position:relative;overflow:hidden;border-radius:28px;margin-bottom:0;padding:76px 56px;background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);color:#fff;box-shadow:var(--shadow-lift);}
+  .arrive{position:relative;overflow:hidden;border-radius:20px;margin-bottom:0;padding:76px 56px;background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);color:#fff;box-shadow:var(--shadow-lift);}
   .arrive::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);pointer-events:none;}
-  .arrive::after{content:"";position:absolute;inset:0;background:radial-gradient(640px 440px at 86% -14%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%), radial-gradient(520px 400px at -8% 112%, rgba(0,31,67,.6), transparent 70%);pointer-events:none;}
   .arrive > *{position:relative;z-index:1;}
-  .arrive h1{font-family:var(--font-display);font-weight:600;font-size:clamp(36px,4.4vw,54px);line-height:1.12;letter-spacing:-.01em;margin:6px 0 30px;}
-  .tname{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.01em;padding-right:.04em;background:linear-gradient(100deg, color-mix(in srgb, var(--accent) 45%, #fff) 0%, color-mix(in srgb, var(--accent) 20%, #fff) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .a-chips{display:flex;flex-wrap:wrap;gap:14px 26px;}
-  .a-chip{display:inline-flex;align-items:center;gap:10px;font-size:14.5px;color:#c3cddd;}
-  .a-chip .ic{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .a-chip svg{width:16px;height:16px;stroke:color-mix(in srgb, var(--accent) 42%, #fff);fill:none;stroke-width:2;}
+  .arrive h1{font-family:var(--font-display);font-weight:600;font-size:clamp(36px,4.4vw,54px);line-height:1.14;letter-spacing:-.01em;margin:6px 0 36px;}
+  /* the tenant name is the one blank on the form — filled in, ruled, and
+     captioned "employer": the member typed it into that blank one click ago */
+  .tname{position:relative;display:inline-block;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.01em;padding:0 .1em .02em;color:#fff;border-bottom:2.5px solid color-mix(in srgb, var(--accent) 62%, #fff);}
+  /* decorative caption under the blank — a real element with aria-hidden,
+     so every browser both shows it and keeps it out of the a11y tree */
+  .tname .tcap{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);font-family:var(--font-mono);font-style:normal;font-weight:600;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb, var(--accent) 45%, #93a1b8);white-space:nowrap;}
+  /* trust items as the ticket's fine-print manifest — same rule as the landing */
+  .a-chips{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:15px 2px;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);max-width:640px;}
+  .a-chip{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#b9c4d6;}
+  .a-chip .ic{display:flex;flex-shrink:0;}
+  .a-chip svg{width:14px;height:14px;stroke:color-mix(in srgb, var(--accent) 42%, #fff);fill:none;stroke-width:2;}
+  .a-chip.gold{color:var(--gold-bright);}
   .a-chip.gold svg{stroke:var(--gold-bright);}
+  /* arrival choreography — a load-time rise, not a scroll fade */
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(16px);animation:rise 620ms var(--ease-out) forwards;}
+    .reveal.r2{animation-delay:90ms;} .reveal.r3{animation-delay:210ms;}
+    @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  }
 
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:var(--t-label);font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-deep);margin:0 0 14px;}
   .eyebrow .mark{width:12px;height:10.5px;flex-shrink:0;}
   .sec--dark .eyebrow,.arrive .eyebrow{color:color-mix(in srgb, var(--accent) 52%, #fff);}
   /* journey index — the Fraunces numeral thread that strings the five sections
@@ -136,12 +160,12 @@
   .sec--dark .jix{color:color-mix(in srgb, var(--accent) 45%, #fff);border-right-color:rgba(255,255,255,.22);}
   .sec--finale .jix{color:var(--gold-bright);border-right-color:rgba(217,168,103,.4);}
   .sec--finale .eyebrow{color:var(--gold-bright);}
-  h2.sec-title{font-weight:600;font-size:clamp(32px,4vw,46px);letter-spacing:-.015em;line-height:1.12;margin-bottom:14px;color:var(--tc,var(--text));}
-  p.sec-sub{color:var(--mc,var(--muted));font-size:16.5px;max-width:640px;margin:0 0 48px;}
-  .h3-sub{font-weight:600;font-size:23px;margin:46px 0 10px;color:var(--tc,var(--text));}
+  h2.sec-title{font-weight:600;font-size:var(--t-title);letter-spacing:-.015em;line-height:1.12;margin-bottom:14px;color:var(--tc,var(--text));}
+  p.sec-sub{color:var(--mc,var(--muted));font-size:var(--t-sub);max-width:640px;margin:0 0 48px;}
+  .h3-sub{font-weight:600;font-size:var(--t-h3);margin:46px 0 10px;color:var(--tc,var(--text));}
   .h3-sub--rule{margin-top:56px;padding-top:40px;border-top:1px solid var(--hair,var(--line));}
   .sec--finale .h3-sub--rule{border-top-color:rgba(217,168,103,.26);}
-  .p-sub{color:var(--mc,var(--muted));font-size:15px;margin:0 0 6px;max-width:640px;}
+  .p-sub{color:var(--mc,var(--muted));font-size:var(--t-body);margin:0 0 6px;max-width:640px;}
 
   /* dark-canvas rethemes for components that live in the finale */
   .sec--dark .flow-num{border-color:rgba(255,255,255,.22);color:color-mix(in srgb, var(--accent) 38%, #fff);box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 8px 20px rgba(0,0,0,.35);}
@@ -155,14 +179,6 @@
   .sec--dark .faq-q{color:#fff;}
   .sec--dark .faq-q svg{stroke:color-mix(in srgb, var(--accent) 50%, #fff);}
   .sec--dark .faq-a-inner{color:#b9c6da;}
-  .sec--dark .cta-band{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);}
-
-  /* ===== Fade-up on scroll ===== */
-  @media (prefers-reduced-motion:no-preference){
-    .fu{opacity:0;transform:translateY(20px);}
-    .fu.in{animation:fu 460ms var(--ease-out) forwards;}
-    @keyframes fu{to{opacity:1;transform:translateY(0);}}
-  }
 
   /* ===== Step flow — the one spine every numbered sequence rides =====
      Fraunces italic numerals stay the site's typographic signature, but scaled
@@ -195,8 +211,8 @@
     .flow-body h3{font-size:18px;}
   }
   @media (prefers-reduced-motion:no-preference){
-    .flow-step.fu::after{transform:scaleY(0);transition:transform 900ms cubic-bezier(.16,1,.3,1) 180ms;}
-    .flow-step.fu.in::after{transform:scaleY(1);}
+    .flow-step::after{transform:scaleY(0);transition:transform 900ms cubic-bezier(.16,1,.3,1) 180ms;}
+    .flow-step.in::after{transform:scaleY(1);}
   }
   /* compact flow — status timelines whose bodies are one-liners */
   .flow--compact .flow-step{padding:16px 0;}
@@ -211,19 +227,27 @@
     .flow--compact .flow-body{padding-top:8px;}
   }
 
-  /* ===== Stat card ===== */
-  .stat-card{position:relative;overflow:hidden;background:var(--ink);border-radius:24px;padding:44px 48px;color:#fff;margin-top:16px;box-shadow:var(--shadow-lift);}
-  .stat-card .wm{position:absolute;right:-40px;bottom:-40px;width:260px;height:230px;opacity:.5;}
-  .stat-label{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8d99ad;margin-bottom:26px;}
-  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;position:relative;z-index:1;}
-  .stat{}
-  .stat .num{font-size:clamp(44px,5.5vw,60px);font-weight:700;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;}
-  .stat .num.gold{color:var(--gold-bright);}
-  .stat .num:not(.gold){color:#9fc2e0;color:color-mix(in srgb, var(--accent) 42%, white);}
-  .stat .lbl{font-size:15px;color:#dbe2ee;margin-top:8px;}
-  .stat .sub{font-size:13.5px;color:#7c88a0;}
-  .stat-foot{margin-top:30px;padding-top:22px;border-top:1px solid rgba(255,255,255,.1);font-size:13.5px;color:#aab6c9;position:relative;z-index:1;}
-  
+  /* ===== Pay stub — the printed statement the numbers actually live on =====
+     Replaces the dashboard stat card: ruled mono rows, leader dots, static
+     figures. The reward row is the page's gold-forward moment on paper. */
+  .paystub{position:relative;background:#fff;background-image:var(--grain);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-md);padding:22px 26px 20px;margin-top:44px;max-width:660px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+  .ps-head{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--line);}
+  .ps-head .mark{width:11px;height:9.5px;color:var(--accent);flex-shrink:0;}
+  .ps-row{display:flex;align-items:baseline;gap:12px;padding:14px 0 12px;border-bottom:1px dashed var(--line);}
+  .ps-lbl{font-size:13px;font-weight:600;color:var(--text);}
+  .ps-dots{flex:1;border-bottom:2px dotted #C7CFDC;transform:translateY(-4px);}
+  .ps-val{font-size:22px;font-weight:700;color:var(--accent-deep);letter-spacing:-.02em;}
+  .ps-note{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+  .ps-row.gold .ps-lbl,.ps-row.gold .ps-note{color:var(--gold-ink);}
+  .ps-row.gold .ps-val{color:var(--gold-deep);}
+  .ps-row.gold .ps-dots{border-bottom-color:rgba(184,135,79,.45);}
+  .ps-foot{font-family:var(--font-ui);font-size:13px;color:var(--muted);line-height:1.65;padding-top:14px;}
+  @media (max-width:560px){
+    .paystub{padding:18px 18px 16px;}
+    .ps-row{flex-wrap:wrap;row-gap:2px;}
+    .ps-note{flex-basis:100%;text-align:right;}
+  }
+
 
   /* ===== Search (Check Your Drug) — the moment before the receipt =====
      Desktop: search + suggestions on the left, a dashed "dock" on the right
@@ -233,7 +257,7 @@
   .check-search{grid-area:search;}
   .check-out{grid-area:out;min-height:236px;}
   .check-suggest{grid-area:suggest;margin-top:36px;}
-  .dock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:236px;border:1.5px dashed color-mix(in srgb, var(--accent) 30%, var(--line));border-radius:16px;background:color-mix(in srgb, var(--accent) 3%, transparent);text-align:center;padding:32px;}
+  .dock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:236px;border:1.5px dashed color-mix(in srgb, var(--accent) 30%, var(--line));border-radius:16px;text-align:center;padding:32px;}
   .dock svg{width:30px;height:26px;color:color-mix(in srgb, var(--accent) 55%, var(--faint));opacity:.75;}
   .dock p{margin:0;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--faint);line-height:1.8;max-width:26ch;}
   .check-grid:has(.receipt-wrap.printed) .dock{display:none;}
@@ -257,12 +281,10 @@
   .search-row button svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.2;}
   .chip-label{font-size:13.5px;color:var(--muted);font-weight:600;margin:0 0 12px;}
   .chips{display:flex;flex-wrap:wrap;gap:10px;}
-  /* page-level suggestion chips only — receipt strength chips keep their own feel */
-  .chips .chip{transition:background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, transform var(--dur-fast) ease, box-shadow var(--dur-med) ease;}
-  .chips .chip:hover{background:var(--accent-tint);border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
-  .chips .chip:active{transform:translateY(0) scale(.97);}
+  /* page-level suggestion chips only — receipt strength chips keep their own feel.
+     Hover is an ink change, not a lift: paper doesn't levitate. */
   .chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-family:var(--font-ui);font-size:13.5px;font-weight:500;line-height:1.2;color:var(--text);cursor:pointer;transition:background-color 150ms ease, border-color 150ms ease, transform 150ms ease;}
-  .chip:hover{background:var(--accent-tint);border-color:var(--accent);transform:scale(1.05);}
+  .chip:hover{background:var(--accent-tint);border-color:var(--accent);}
   .chip:active{transform:scale(.97);}
   .chip svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2;}
 
@@ -321,8 +343,8 @@
     .receipt-wrap{transition:none;}
   }
 
-  /* ===== Callout — informational, so it wears the tenant accent, not gold ===== */
-  .callout{display:flex;gap:14px;background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 13%, #fff), color-mix(in srgb, var(--accent) 5%, #fff));border:1px solid color-mix(in srgb, var(--accent) 38%, transparent);border-radius:var(--radius-md);padding:18px 20px;margin-top:8px;}
+  /* ===== Callout — a ruled margin note: the accent is the pen, not a wash ===== */
+  .callout{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:18px 20px;margin-top:8px;}
   .callout svg{width:20px;height:20px;stroke:var(--accent-deep);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;}
   .callout strong{display:block;color:var(--text);font-size:15px;margin-bottom:3px;}
   .callout p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.6;}
@@ -336,6 +358,37 @@
 
   /* ===== Elevated card ===== */
   .elevcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-md);padding:28px 30px;}
+
+  /* ===== Claim ticket — the landing stub's grammar at the moment of highest
+     intent: a perforated ticket you take to the counter. Tears when pulled. */
+  .ticket{position:relative;display:inline-flex;align-items:stretch;margin-top:26px;background:#fff;background-image:var(--grain);border:1.5px solid var(--gold);text-decoration:none;color:var(--text);border-radius:8px;rotate:-.6deg;filter:drop-shadow(0 3px 6px rgba(139,101,55,.22));transition:rotate var(--dur-med) var(--ease-out), translate var(--dur-med) var(--ease-out), filter var(--dur-med) ease, border-color var(--dur-fast) ease;
+    mask-image:radial-gradient(circle at 122px 0, transparent 5px, #000 6px),radial-gradient(circle at 122px 100%, transparent 5px, #000 6px);
+    -webkit-mask-image:radial-gradient(circle at 122px 0, transparent 5px, #000 6px),radial-gradient(circle at 122px 100%, transparent 5px, #000 6px);
+    mask-composite:intersect;-webkit-mask-composite:source-in;}
+  /* the ticket wears gold — the edge, perforation, and arrow are the money
+     inks; only the issuer's wordmark on its chip stays neutral, identical
+     across tenants */
+  .tk-stub{display:flex;align-items:center;justify-content:center;width:122px;border-right:1.5px dashed rgba(184,135,79,.55);background:#FBF6EC;border-radius:6px 0 0 6px;}
+  .tk-stub img{height:14px;width:auto;display:block;}
+  .tk-body{display:flex;align-items:center;gap:10px;padding:16px 24px;font-family:var(--font-ui);font-size:15.5px;font-weight:700;}
+  .tk-body .arrow{color:var(--gold-deep);transition:transform var(--dur-fast) ease;}
+  @media (hover:hover){
+    .ticket:hover{rotate:0deg;translate:0 -2px;border-color:var(--gold-deep);filter:drop-shadow(0 10px 18px rgba(184,135,79,.4));}
+    .ticket:hover .arrow{transform:translateX(3px);}
+  }
+  .ticket:focus-visible{rotate:0deg;border-color:var(--gold-deep);filter:drop-shadow(0 10px 18px rgba(184,135,79,.4));}
+  .ticket:active{translate:0 0;}
+  @media (prefers-reduced-motion:no-preference){
+    .ticket.tearing{animation:tk-tear 460ms var(--ease-out);}
+    @keyframes tk-tear{30%{translate:10px -12px;rotate:2deg;}100%{translate:0 0;rotate:-.6deg;}}
+  }
+  @media (max-width:560px){
+    .ticket{mask-image:radial-gradient(circle at 98px 0, transparent 5px, #000 6px),radial-gradient(circle at 98px 100%, transparent 5px, #000 6px);
+      -webkit-mask-image:radial-gradient(circle at 98px 0, transparent 5px, #000 6px),radial-gradient(circle at 98px 100%, transparent 5px, #000 6px);}
+    .tk-stub{width:98px;}
+    .tk-stub img{height:12px;}
+    .tk-body{padding:14px 18px;font-size:14.5px;}
+  }
 
   .checklist{margin-top:40px;max-width:640px;}
   .checklist h4{font-size:16.5px;margin-bottom:16px;}
@@ -374,12 +427,15 @@
   .faq-a{max-height:0;overflow:hidden;transition:max-height var(--dur-slow) var(--ease-out);}
   .faq-a-inner{padding:0 22px 20px;color:var(--muted);font-size:15px;line-height:1.65;}
 
-  /* ===== Dark CTA band ===== */
-  .cta-band{background:var(--sidebar);color:#fff;border-radius:24px;padding:56px 48px;margin-top:24px;position:relative;overflow:hidden;text-align:center;}
-  .cta-band::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(circle at 50% 50%, black, transparent 75%);pointer-events:none;}
-  .cta-band h3{position:relative;font-weight:600;font-size:32px;letter-spacing:-.01em;margin-bottom:12px;}
-  .cta-band p{position:relative;color:#aab6c9;font-size:15px;max-width:460px;margin:0 auto 26px;}
-  .cta-band .btn{margin-top:0;}
+  /* ===== Remittance slip — the detachable strip at the bottom of the ink
+     statement: perforated top edge, punched notches, paper on ink ===== */
+  .remit{position:relative;margin:72px -56px -72px;padding:46px 56px 52px;background:var(--paper);background-image:var(--grain);color:var(--text);text-align:center;border-top:1.5px dashed #B9C4D6;
+    mask-image:radial-gradient(circle at 26px 0, transparent 6px, #000 7px),radial-gradient(circle at calc(100% - 26px) 0, transparent 6px, #000 7px);
+    -webkit-mask-image:radial-gradient(circle at 26px 0, transparent 6px, #000 7px),radial-gradient(circle at calc(100% - 26px) 0, transparent 6px, #000 7px);
+    mask-composite:intersect;-webkit-mask-composite:source-in;}
+  .remit h3{font-weight:600;font-size:28px;letter-spacing:-.01em;margin-bottom:12px;color:var(--text);}
+  .remit p{color:var(--muted);font-size:var(--t-body);max-width:460px;margin:0 auto 26px;}
+  .remit .btn{margin-top:0;}
 
   /* ===== Footer — dark brand anchor, same construction as the landing page ===== */
   footer.site{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--ink-2) 0%,var(--ink) 100%);color:#aab6c9;}
@@ -392,7 +448,7 @@
   .foot-desc{margin:24px 0 0;font-size:15px;line-height:1.75;color:#aab6c9;}
   .foot-desc strong{color:#e7ecf5;font-weight:600;}
   .foot-contact{text-align:right;flex-shrink:0;}
-  .foot-lbl{display:block;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#7c88a0;}
+  .foot-lbl{display:block;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7c88a0;}
   .foot-mail{display:inline-block;margin:12px 0 8px;font-family:var(--font-mono);font-size:15.5px;font-weight:500;letter-spacing:0;color:#DBE3EF;text-decoration:none;border-bottom:1px solid rgba(154,184,208,.45);padding-bottom:3px;transition:color var(--dur-fast) ease,border-color var(--dur-fast) ease;}
   .foot-mail:hover{color:#fff;border-color:#fff;}
   .foot-hint{display:block;font-size:13.5px;color:#7c88a0;}
@@ -411,24 +467,22 @@
     .sidebar{display:none;}
     .topbar-inner{padding:14px 16px;}
     .content{padding:16px 12px 0;}
-    section.sec{border-radius:20px;padding:48px 24px 56px;margin-bottom:0;scroll-margin-top:118px;}
+    section.sec{padding:48px 24px 56px;margin-bottom:0;scroll-margin-top:118px;}
+    section.sec--dark{border-radius:16px;}
     section.sec--finale{margin-bottom:20px;}
-    .arrive{border-radius:20px;padding:52px 24px;margin-bottom:0;}
-    .joint{height:48px;}
-    .a-chips{gap:10px 18px;}
-    .a-chip{font-size:13.5px;}
-    .a-chip .ic{width:28px;height:28px;}
-    .stat-row{grid-template-columns:1fr;gap:22px;}
-    .stat-card{padding:36px 26px;}
+    .form-run{border-radius:10px 10px 2px 2px;}
+    .arrive{border-radius:16px;padding:52px 24px;margin-bottom:0;}
+    .fold{height:44px;}
+    .gap{height:32px;}
+    .remit{margin:56px -24px -56px;padding:40px 24px 46px;}
+    .a-chips{flex-direction:column;align-items:flex-start;gap:10px;padding:14px 2px;}
+    .a-chip{font-size:10.5px;}
     .chips .chip{padding:11px 16px;}
-    .cta-band{padding:44px 24px;}
-    .cta-band h3{font-size:26px;}
+    .remit h3{font-size:25px;}
   }
 
-  /* ===== Ledger sheet — the Submit chapter set as an actual document =====
-     Environments stay soft; this canvas is paper: crisp corners, ruled rows,
-     mono indices — the same register the receipt and the pay stub share. */
-  section.sec--ledger{background:var(--paper);border-radius:14px;box-shadow:var(--shadow-sm);}
+  /* ===== Ledger page — the Submit chapter set as ruled document rows =====
+     Lives on the continuous form's paper; only its row treatment differs. */
   .sec--ledger .flow-step{grid-template-columns:44px 1fr;column-gap:18px;padding:22px 0;border-top:1px solid var(--line);}
   .sec--ledger .flow-step:first-child{border-top:0;padding-top:10px;}
   .sec--ledger .flow-step::before,.sec--ledger .flow-step::after{content:none;}
@@ -486,44 +540,43 @@
     <div class="content-inner">
 
       <section class="arrive" aria-label="Member portal welcome">
-        <p class="eyebrow fu"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Cost Plus Drugs Member Program</p>
-        <h1 class="fu">Welcome, <span class="tname">Acme Corporation</span> members.</h1>
-        <div class="a-chips fu">
+        <p class="eyebrow reveal"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Cost Plus Drugs Member Program</p>
+        <h1 class="reveal r2">Welcome, <span class="tname">Acme Corporation<span class="tcap" aria-hidden="true">employer</span></span> members.</h1>
+        <div class="a-chips reveal r3">
           <span class="a-chip"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>Full reimbursement</span>
           <span class="a-chip gold"><span class="ic"><svg viewBox="0 0 24 24"><path d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7S9 2 6 2a2.5 2.5 0 000 5h6z"/><path d="M12 7s3-5 6-5a2.5 2.5 0 010 5h-6z"/></svg></span>Up to $50 reward per fill</span>
           <span class="a-chip"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>Covered by your employer</span>
         </div>
       </section>
 
-      <div class="joint fu" aria-hidden="true"></div>
+      <div class="gap" aria-hidden="true"></div>
 
-      <section class="sec sec--tint" id="sec-how">
+      <div class="form-run">
+
+      <section class="sec" id="sec-how">
         <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">01</span>Program Overview</p>
         <h2 class="sec-title">How the program works</h2>
         <p class="sec-sub">Four simple steps to save on your prescriptions and earn cash back.</p>
 
         <ol class="flow">
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Check if your drug is available</h3><p>Use the drug lookup tool on this page or browse costplusdrugs.com to see if your medication is in the Cost Plus formulary. Most common generics are available at dramatically lower prices.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Order directly on Cost Plus Drugs</h3><p>Visit costplusdrugs.com, create a free account, and order your prescription. You&rsquo;ll pay out of pocket at checkout — the prices are already a fraction of what you&rsquo;d pay at a traditional pharmacy.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Submit your receipt</h3><p>After your order arrives, upload your Cost Plus receipt through our simple reimbursement form. Include the order confirmation showing the drug name, quantity, and amount paid.</p></div></li>
-          <li class="flow-step gold fu"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Get fully reimbursed + earn a reward</h3><p>Maverick processes your claim within 3 business days. You&rsquo;ll receive a payment for 100% of your out-of-pocket cost (prescription + shipping) PLUS a <strong style="color:var(--gold-deep)">10% savings reward</strong> — up to $50 per fill.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Check if your drug is available</h3><p>Use the drug lookup tool on this page or browse costplusdrugs.com to see if your medication is in the Cost Plus formulary. Most common generics are available at dramatically lower prices.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Order directly on Cost Plus Drugs</h3><p>Visit costplusdrugs.com, create a free account, and order your prescription. You&rsquo;ll pay out of pocket at checkout — the prices are already a fraction of what you&rsquo;d pay at a traditional pharmacy.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Submit your receipt</h3><p>After your order arrives, upload your Cost Plus receipt through our simple reimbursement form. Include the order confirmation showing the drug name, quantity, and amount paid.</p></div></li>
+          <li class="flow-step gold"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Get fully reimbursed + earn a reward</h3><p>Maverick processes your claim within 3 business days. You&rsquo;ll receive a payment for 100% of your out-of-pocket cost (prescription + shipping) PLUS a <strong style="color:var(--gold-deep)">10% savings reward</strong> — up to $50 per fill.</p></div></li>
         </ol>
 
-        <div class="stat-card fu">
-          <svg class="wm" viewBox="0 0 200 180" aria-hidden="true"><path d="M100 4 L196 176 L4 176 Z" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/></svg>
-          <p class="stat-label">What you get reimbursed</p>
-          <div class="stat-row">
-            <div class="stat"><div class="num" data-count="100" data-suffix="%">100%</div><div class="lbl">Prescription cost</div><div class="sub">reimbursed</div></div>
-            <div class="stat"><div class="num" data-count="100" data-suffix="%">100%</div><div class="lbl">Shipping cost</div><div class="sub">reimbursed</div></div>
-            <div class="stat"><div class="num gold" data-count="10" data-suffix="%">10%</div><div class="lbl">Savings reward</div><div class="sub">up to $50 per fill</div></div>
-          </div>
-          <div class="stat-foot">Payments are issued monthly via your choice of <span class="gold-word">Venmo, PayPal, Cash App, ACH direct deposit, or prepaid Visa card</span>.</div>
+        <div class="paystub">
+          <div class="ps-head"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>What you get reimbursed</div>
+          <div class="ps-row"><span class="ps-lbl">Prescription cost</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">100%</span><span class="ps-note">reimbursed</span></div>
+          <div class="ps-row"><span class="ps-lbl">Shipping cost</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">100%</span><span class="ps-note">reimbursed</span></div>
+          <div class="ps-row gold"><span class="ps-lbl">Savings reward</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">10%</span><span class="ps-note">up to $50 per fill</span></div>
+          <div class="ps-foot">Payments are issued monthly via your choice of <span class="gold-word">Venmo, PayPal, Cash App, ACH direct deposit, or prepaid Visa card</span>.</div>
         </div>
       </section>
 
-      <div class="joint fu" aria-hidden="true"></div>
+      <div class="fold" aria-hidden="true"></div>
 
-      <section class="sec sec--panel" id="sec-check">
+      <section class="sec" id="sec-check">
         <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">02</span>Drug Lookup</p>
         <h2 class="sec-title">Check if your drug is covered</h2>
         <p class="sec-sub">Enter your medication name to see if it&rsquo;s available on Cost Plus Drugs and how much you could save.</p>
@@ -564,22 +617,22 @@
         </div>
       </section>
 
-      <div class="joint fu" aria-hidden="true"></div>
+      <div class="fold" aria-hidden="true"></div>
 
-      <section class="sec sec--tint sec--mirror" id="sec-register">
+      <section class="sec" id="sec-register">
         <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">03</span>Getting Started</p>
         <h2 class="sec-title">How to register on Cost Plus Drugs</h2>
         <p class="sec-sub">Setting up your Cost Plus Drugs account takes about 5 minutes.</p>
 
         <ol class="flow">
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Go to costplusdrugs.com</h3><p>Open costplusdrugs.com in your browser. The site is available on desktop and mobile.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Create a free account</h3><p>Click &ldquo;Sign Up&rdquo; and enter your name, email address, date of birth, and shipping address. There is no membership fee — the account is completely free.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Search for your medication</h3><p>Use the search bar to find your drug by name. You can search by brand name or generic name. Select the correct dosage and quantity.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Complete your order</h3><p>Add to cart and checkout. You&rsquo;ll pay with a credit or debit card. Your prescription will be reviewed by a licensed pharmacist before shipping — no physical prescription card needed for most generics.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Receive your order</h3><p>Medications typically arrive in 4&ndash;7 business days. Keep your order confirmation email — you&rsquo;ll need it to submit your reimbursement request.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Go to costplusdrugs.com</h3><p>Open costplusdrugs.com in your browser. The site is available on desktop and mobile.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Create a free account</h3><p>Click &ldquo;Sign Up&rdquo; and enter your name, email address, date of birth, and shipping address. There is no membership fee — the account is completely free.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Search for your medication</h3><p>Use the search bar to find your drug by name. You can search by brand name or generic name. Select the correct dosage and quantity.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Complete your order</h3><p>Add to cart and checkout. You&rsquo;ll pay with a credit or debit card. Your prescription will be reviewed by a licensed pharmacist before shipping — no physical prescription card needed for most generics.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Receive your order</h3><p>Medications typically arrive in 4&ndash;7 business days. Keep your order confirmation email — you&rsquo;ll need it to submit your reimbursement request.</p></div></li>
         </ol>
 
-        <div class="callout fu">
+        <div class="callout">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg>
           <div><strong>Important: keep your receipts</strong><p>Save your Cost Plus order confirmation email after every purchase. You&rsquo;ll upload it when submitting your reimbursement. Without a receipt, we cannot process your claim.</p></div>
         </div>
@@ -587,22 +640,22 @@
         <a class="btn" href="https://costplusdrugs.com" target="_blank" rel="noopener">Go to costplusdrugs.com <svg viewBox="0 0 24 24" width="15" height="15" style="stroke:#fff;fill:none;stroke-width:2.4"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
       </section>
 
-      <div class="joint fu" aria-hidden="true"></div>
+      <div class="fold" aria-hidden="true"></div>
 
-      <section class="sec sec--panel sec--ledger" id="sec-submit">
+      <section class="sec sec--ledger" id="sec-submit">
         <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">04</span>Reimbursement</p>
         <h2 class="sec-title">How to submit a receipt</h2>
         <p class="sec-sub">The reimbursement process is simple — no paper forms, no mailing anything.</p>
 
         <ol class="flow">
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Gather your Cost Plus receipt</h3><p>After your order arrives, locate your order confirmation email from Cost Plus Drugs. It shows your name, drug name, quantity, amount paid, and shipping cost.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Open the reimbursement form</h3><p>Click the Submit a Claim button below. You&rsquo;ll be taken to a secure online form managed by Maverick Administrators.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Fill in your information</h3><p>Enter your name, email address, employer name, and the details from your receipt: drug name, date of purchase, prescription amount, and shipping amount.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Upload your receipt</h3><p>Attach a photo or PDF of your Cost Plus order confirmation. A screenshot from your email is fine — just make sure the drug name, date, and total amount are clearly visible.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Submit and wait for confirmation</h3><p>Once submitted, you&rsquo;ll receive an email confirmation within minutes. Maverick will review your claim within 3 business days and notify you of the outcome.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Gather your Cost Plus receipt</h3><p>After your order arrives, locate your order confirmation email from Cost Plus Drugs. It shows your name, drug name, quantity, amount paid, and shipping cost.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Open the reimbursement form</h3><p>Click the Submit a Claim button below. You&rsquo;ll be taken to a secure online form managed by Maverick Administrators.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Fill in your information</h3><p>Enter your name, email address, employer name, and the details from your receipt: drug name, date of purchase, prescription amount, and shipping amount.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Upload your receipt</h3><p>Attach a photo or PDF of your Cost Plus order confirmation. A screenshot from your email is fine — just make sure the drug name, date, and total amount are clearly visible.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Submit and wait for confirmation</h3><p>Once submitted, you&rsquo;ll receive an email confirmation within minutes. Maverick will review your claim within 3 business days and notify you of the outcome.</p></div></li>
         </ol>
 
-        <div class="elevcard checklist fu">
+        <div class="elevcard checklist">
           <h4>What to include in your submission</h4>
           <ul>
             <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Your full name and email address</li>
@@ -614,11 +667,14 @@
             <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Receipt file (PDF or photo — order confirmation email is fine)</li>
           </ul>
         </div>
-        <a class="btn" href="https://su007.share-na2.hsforms.com/2JD5rjAvZQgywDqKeLq1GUQ" target="_blank" rel="noopener noreferrer">Submit a Claim <span aria-hidden="true">→</span></a>
+        <a class="ticket" href="https://su007.share-na2.hsforms.com/2JD5rjAvZQgywDqKeLq1GUQ" target="_blank" rel="noopener noreferrer"><span class="tk-stub" aria-hidden="true"><img src="maverick-logo.png" alt="" /></span><span class="tk-body">Submit a Claim <span class="arrow" aria-hidden="true">→</span></span></a>
         <p style="font-size:13px;color:var(--faint);margin-top:10px;">You&rsquo;ll be taken to Maverick&rsquo;s secure claim submission form.</p>
       </section>
 
-      <div class="joint fu" aria-hidden="true"></div>
+      </div><!-- /form-run -->
+      <div class="run-tear" aria-hidden="true"></div>
+
+      <div class="gap" aria-hidden="true"></div>
 
       <section class="sec sec--dark sec--finale" id="sec-paid">
         <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">05</span>Getting Paid</p>
@@ -626,24 +682,24 @@
         <p class="sec-sub">Payments are processed through Tremendous — a secure payment platform that lets you choose exactly how you want to receive your money.</p>
 
         <ol class="flow flow--compact">
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Claim submitted</h3><p>Day 0 — you submit your receipt.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Under review</h3><p>Within 3 business days.</p></div></li>
-          <li class="flow-step fu"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Payment sent</h3><p>Email from Tremendous to choose payment method.</p></div></li>
-          <li class="flow-step gold fu"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Funds received</h3><p>Same day to 2&ndash;4 days depending on method.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Claim submitted</h3><p>Day 0 — you submit your receipt.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Under review</h3><p>Within 3 business days.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Payment sent</h3><p>Email from Tremendous to choose payment method.</p></div></li>
+          <li class="flow-step gold"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Funds received</h3><p>Same day to 2&ndash;4 days depending on method.</p></div></li>
         </ol>
 
         <h3 class="h3-sub h3-sub--rule">Choose how you get paid</h3>
         <p class="p-sub">After your claim is approved, you&rsquo;ll receive an email from Tremendous with a redemption link. Open it and select your preferred payment method — you don&rsquo;t need to set anything up in advance.</p>
         <div class="pay-grid">
-          <div class="elevcard pay-card fu"><span class="pay-ic pm-venmo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M13.4 7.5l-3.6 5h4.4l-3.6 5"/></svg></span><div><h4>Venmo</h4><p>Instant transfer to your Venmo account</p></div></div>
-          <div class="elevcard pay-card fu"><span class="pay-ic pm-paypal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v2"/><circle cx="16.5" cy="13" r="1.1" fill="currentColor" stroke="none"/></svg></span><div><h4>PayPal</h4><p>Sent to your PayPal balance in minutes</p></div></div>
-          <div class="elevcard pay-card fu"><span class="pay-ic pm-cash"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2.5" x2="12" y2="21.5"/><path d="M16.5 5.5H10a3.25 3.25 0 000 6.5h4a3.25 3.25 0 010 6.5H7"/></svg></span><div><h4>Cash App</h4><p>Direct to your Cash App account</p></div></div>
-          <div class="elevcard pay-card fu"><span class="pay-ic pm-ach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M12 3l9 7H3z"/><path d="M5 10v11"/><path d="M9.7 10v11"/><path d="M14.3 10v11"/><path d="M19 10v11"/></svg></span><div><h4>ACH Direct Deposit</h4><p>To your bank account in 2&ndash;4 days</p></div></div>
-          <div class="elevcard pay-card fu"><span class="pay-ic pm-visa"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="2"/><line x1="1.5" y1="10" x2="22.5" y2="10"/><line class="gold-detail" x1="5.5" y1="15" x2="9.5" y2="15"/></svg></span><div><h4>Prepaid Visa</h4><p>Digital prepaid card via email</p></div></div>
+          <div class="elevcard pay-card"><span class="pay-ic pm-venmo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M13.4 7.5l-3.6 5h4.4l-3.6 5"/></svg></span><div><h4>Venmo</h4><p>Instant transfer to your Venmo account</p></div></div>
+          <div class="elevcard pay-card"><span class="pay-ic pm-paypal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v2"/><circle cx="16.5" cy="13" r="1.1" fill="currentColor" stroke="none"/></svg></span><div><h4>PayPal</h4><p>Sent to your PayPal balance in minutes</p></div></div>
+          <div class="elevcard pay-card"><span class="pay-ic pm-cash"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2.5" x2="12" y2="21.5"/><path d="M16.5 5.5H10a3.25 3.25 0 000 6.5h4a3.25 3.25 0 010 6.5H7"/></svg></span><div><h4>Cash App</h4><p>Direct to your Cash App account</p></div></div>
+          <div class="elevcard pay-card"><span class="pay-ic pm-ach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M12 3l9 7H3z"/><path d="M5 10v11"/><path d="M9.7 10v11"/><path d="M14.3 10v11"/><path d="M19 10v11"/></svg></span><div><h4>ACH Direct Deposit</h4><p>To your bank account in 2&ndash;4 days</p></div></div>
+          <div class="elevcard pay-card"><span class="pay-ic pm-visa"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="2"/><line x1="1.5" y1="10" x2="22.5" y2="10"/><line class="gold-detail" x1="5.5" y1="15" x2="9.5" y2="15"/></svg></span><div><h4>Prepaid Visa</h4><p>Digital prepaid card via email</p></div></div>
         </div>
 
         <h3 class="h3-sub h3-sub--rule" style="margin-bottom:16px;">Common questions</h3>
-        <div class="faq fu">
+        <div class="faq">
           <div class="faq-item">
             <button class="faq-q" type="button">When are payments issued?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
             <div class="faq-a"><div class="faq-a-inner">Claims approved during the month are batched and paid by the last business day of each month. You&rsquo;ll receive your Tremendous payment email once your claim is approved.</div></div>
@@ -662,7 +718,7 @@
           </div>
         </div>
 
-        <div class="cta-band fu">
+        <div class="remit">
           <h3>Ready to start saving?</h3>
           <p>Check if your medication is available on Cost Plus, or jump straight to submitting your first claim.</p>
           <a class="btn" href="#sec-check">Check your drug now <span aria-hidden="true">→</span></a>
@@ -760,22 +816,21 @@
     secs.forEach(function(s){ if(s) io.observe(s); });
   })();
 
-  // Fade-up reveal on scroll
+  // Draw-in for the reading threads: flow rails and perforated fold lines.
+  // Nothing fades — printed things are already there; only the lines draw.
   (function(){
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)){
-      document.querySelectorAll('.fu').forEach(function(el){ el.classList.add('in'); });
+    var els = document.querySelectorAll('.flow-step, .fold');
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window)){
+      els.forEach(function(el){ el.classList.add('in'); });
       return;
     }
     var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry, i){
-        if(entry.isIntersecting){
-          entry.target.style.animationDelay = (i % 5) * 60 + 'ms';
-          entry.target.classList.add('in');
-          io.unobserve(entry.target);
-        }
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
       });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.fu').forEach(function(el){ io.observe(el); });
+    }, { threshold: .2 });
+    els.forEach(function(el){ io.observe(el); });
   })();
 
   // Step-flow spotlight — light the tile of the step currently being read
@@ -816,28 +871,16 @@
     });
   });
 
-  // Count-up on the reimbursement stats
+  // Claim ticket — tear feedback on pull (the form itself opens in a new tab)
   (function(){
-    var nums = document.querySelectorAll('.stat .num[data-count]');
-    if(!nums.length) return;
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(reduced || !('IntersectionObserver' in window)) return; // keep static final values
-    nums.forEach(function(el){ el.textContent = '0' + (el.dataset.suffix || ''); });
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(!en.isIntersecting) return;
-        io.unobserve(en.target);
-        var el = en.target, t = +el.dataset.count, s = el.dataset.suffix || '';
-        var start = performance.now();
-        (function tick(now){
-          var p = Math.min((now - start) / 900, 1);
-          p = 1 - Math.pow(1 - p, 3);
-          el.textContent = Math.round(t * p) + s;
-          if(p < 1) requestAnimationFrame(tick);
-        })(start);
-      });
-    }, { threshold: .4 });
-    nums.forEach(function(el){ io.observe(el); });
+    var t = document.querySelector('.ticket');
+    if(!t) return;
+    t.addEventListener('click', function(){
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      t.classList.remove('tearing'); void t.offsetWidth;
+      t.classList.add('tearing');
+    });
+    t.addEventListener('animationend', function(){ t.classList.remove('tearing'); });
   })();
 
   // Savings receipt — prints the reward FORMULA, never asserted drug prices.
