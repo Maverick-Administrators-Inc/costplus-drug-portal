@@ -1,5 +1,5 @@
 // End-to-end checks for the "Check Your Drug" lookup and savings receipt.
-// 26 assertions per portal file:
+// 29 assertions per portal file:
 //   1. searching a real drug prints the receipt with a real price line
 //   2. strength chips exist, switch selection, and update the prefilled amount
 //   3. typing into the try-it calculator updates the reward live
@@ -7,6 +7,8 @@
 //   5. unknown drugs fall back to the formula-only no-match copy
 //   6. over file:// (data fetch blocked) the receipt still prints formula-only, no page errors
 //   7. the reward truncates fractional cents instead of rounding up (e.g. $6.427 -> $6.42, not $6.43)
+//   8. the flat $5.25 shipping estimate prints (online and offline) with its disclaimer,
+//      and folds into the reimbursement + paid-to-you totals but never into the reward
 //
 // Usage:
 //   npm test                       -> both portal files
@@ -45,6 +47,8 @@ for (const PAGE of pages) {
   ok(priceLine === 1, 'real price line rendered from data');
   const price1 = priceLine ? await page.locator('#receipt .r-real strong').innerText() : '';
   ok(/^\$\d+\.\d{2}$/.test(price1), `price is money-formatted (${price1})`);
+  ok((await page.locator('[data-role="ship"]').innerText()) === '$5.25', 'shipping line shows $5.25');
+  ok((await page.locator('#receipt').innerText()).includes('Shipping costs may vary'), 'shipping disclaimer present');
 
   console.log(`\n[http] strength chips`);
   const chips = page.locator('#receipt .r-strengths .chip');
@@ -63,16 +67,16 @@ for (const PAGE of pages) {
   await page.fill('#tryRetail', '100');
   await page.waitForTimeout(100);
   ok(await page.locator('[data-role="pay"]').innerText() === '$10.00', 'pay line = $10.00');
-  ok((await page.locator('[data-role="back"]').innerText()).includes('$10.00'), 'reimburse line mirrors pay');
+  ok(await page.locator('[data-role="back"]').innerText() === '−$15.25', 'reimburse line = pay + $5.25 shipping');
   ok(await page.locator('[data-role="reward"]').innerText() === '+$9.00', 'reward = +$9.00 (10% of $90 saved)');
-  ok(await page.locator('[data-role="paid"]').innerText() === '+$19.00', 'paid-to-you = payment + reward');
+  ok(await page.locator('[data-role="paid"]').innerText() === '+$24.25', 'paid-to-you = payment + shipping + reward');
   ok(!(await page.locator('[data-role="cap"]').evaluate(el => el.classList.contains('show'))), 'cap note hidden under $50');
 
   await page.fill('#tryPay', '25.73');
   await page.fill('#tryRetail', '90.00');
   await page.waitForTimeout(100);
   ok(await page.locator('[data-role="reward"]').innerText() === '+$6.42', 'reward truncates fractional cents (64.27 * 10% = 6.427 -> $6.42, not $6.43)');
-  ok(await page.locator('[data-role="paid"]').innerText() === '+$32.15', 'paid-to-you reflects the truncated reward');
+  ok(await page.locator('[data-role="paid"]').innerText() === '+$37.40', 'paid-to-you reflects the truncated reward + shipping');
 
   await page.fill('#tryRetail', '800');
   await page.waitForTimeout(100);
@@ -104,6 +108,7 @@ for (const PAGE of pages) {
   ok(await page2.locator('#receiptWrap.printed').count() === 1, 'receipt still prints');
   ok((await page2.locator('#receipt .r-real').count()) === 0, 'no price line (formula-only fallback)');
   ok((await page2.locator('#receipt .r-tag').count()) === 1, 'formula block present');
+  ok((await page2.locator('[data-role="ship"]').innerText()) === '$5.25', 'shipping line renders offline too (flat rate, not from fetched data)');
   await page2.fill('#tryPay', '20');
   await page2.fill('#tryRetail', '120');
   ok(await page2.locator('[data-role="reward"]').innerText() === '+$10.00', 'calculator works offline');

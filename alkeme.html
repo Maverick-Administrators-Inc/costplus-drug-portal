@@ -1044,6 +1044,10 @@
     // Real catalog (data/drug-prices.json, refreshed weekly by CI). Until it
     // loads — or if it fails — the receipt falls back to formula-only.
     var meds = null, generatedAt = null;
+    // Flat per-fill shipping estimate — confirmed by Aaron (Aug 2026). Most
+    // fills ship for $5.25; a few (e.g. refrigerated meds) cost more, hence
+    // the disclaimer next to every shipping line in the receipt.
+    var SHIPPING_ESTIMATE = 5.25;
     fetch('data/drug-prices.json')
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(d){ if(d && d.medications){ meds = d.medications; generatedAt = d.generated_at; } })
@@ -1124,11 +1128,13 @@
         }
         html += '<span class="r-tag">Your reimbursement formula</span>';
         html += line('You pay at checkout', 'Cost Plus price', '', 'pay');
-        html += line('Maverick reimburses', '100% of it', 'accent', 'back');
+        html += line('Shipping (est.)', money(SHIPPING_ESTIMATE), '', 'ship');
+        html += '<p class="r-hint">Shipping costs may vary for certain medications. Please verify shipping costs on the Cost Plus website.</p>';
+        html += line('Maverick reimburses', '100% of both', 'accent', 'back');
         html += line('Savings reward', '+10% of savings &middot; up to $50', 'gold', 'reward');
         html += '<div class="r-rule"></div>';
         html += line('Your net cost', '$0.00', 'net');
-        html += line('Paid to you', 'your payment + reward', 'gold', 'paid');
+        html += line('Paid to you', 'your payment + shipping + reward', 'gold', 'paid');
         html += '<div class="r-try">';
         html += '<label for="tryPay">Try it &mdash; you pay at Cost Plus:</label>';
         html += '<div class="r-try-field"><span class="cur" aria-hidden="true">$</span><input id="tryPay" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"></div>';
@@ -1167,20 +1173,20 @@
           var p = num(payIn), r = num(retailIn);
           if(p !== null){
             pay.textContent = money(p);
-            back.textContent = '−' + money(p);
+            back.textContent = '−' + money(p + SHIPPING_ESTIMATE);
           } else {
             pay.textContent = 'Cost Plus price';
-            back.textContent = '100% of it';
+            back.textContent = '100% of both';
           }
           if(p !== null && r !== null){
             var rew = truncateCents(Math.min(Math.max(r - p, 0) * .10, 50));
             reward.textContent = '+' + money(rew);
-            // full reimbursement: what they paid at Cost Plus + the reward
-            paid.textContent = '+' + money(p + rew);
+            // full reimbursement: what they paid at Cost Plus + shipping + the reward
+            paid.textContent = '+' + money(p + SHIPPING_ESTIMATE + rew);
             cap.classList.toggle('show', (r - p) * .10 > 50);
           } else {
             reward.textContent = '+10% of savings · up to $50';
-            paid.textContent = 'your payment + reward';
+            paid.textContent = 'your payment + shipping + reward';
             cap.classList.remove('show');
           }
         }
