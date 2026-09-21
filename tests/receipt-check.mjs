@@ -18,7 +18,7 @@
 import { chromium } from 'playwright-core';
 import { serve } from './serve.mjs';
 
-const pages = process.argv.slice(2).length ? process.argv.slice(2) : ['alkeme.html', 'acme-corporation.html'];
+const pages = process.argv.slice(2).length ? process.argv.slice(2) : ['alkeme.html', 'acme-corporation.html', 'verita-global.html'];
 
 const { server, port } = await serve();
 const browser = await chromium.launch();
