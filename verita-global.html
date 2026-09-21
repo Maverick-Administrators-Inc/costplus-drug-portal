@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Verita Global — Alkeme Rx Redirect</title>
+<link rel="icon" href="maverick-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..700;1,9..144,600&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#25475e; --ink-2:#203E52; --ink-3:#1C3647; --sidebar:#25475e; --sidebar-active:#25475e;
+    --bg:#EAEFF6; --panel:#ffffff; --paper:#FDFCF9;
+    --text:#0A121F; --muted:#50617B; --faint:#8D99AD; --line:#DDE3EE;
+    --navy:#25475e;
+    --gold:#F4BD50; --gold-bright:#F8D384; --gold-deep:#AF7F26;
+    --accent:#25475e; --accent-deep:#1A3444; --accent-tint: rgba(37,71,94,.10);
+    --radius-lg:20px; --radius-md:12px; --radius-sm:8px;
+    --shadow-sm:0 1px 2px rgba(10,19,34,.05), 0 2px 8px rgba(10,19,34,.05);
+    --shadow-md:0 10px 26px -6px rgba(10,19,34,.16), 0 4px 10px rgba(10,19,34,.06);
+    --shadow-lift:0 16px 36px -8px rgba(10,19,34,.22), 0 6px 14px rgba(10,19,34,.08);
+    /* Fraunces stays: its italic numerals are the site's signature. The two
+       workhorses are chosen for the paper world — Franklin (US forms and
+       newsprint) for text, Plex Mono (IBM typewriter lineage) for data. */
+    --font-display:'Fraunces', Georgia, serif;
+    --font-ui:'Libre Franklin', system-ui, sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, monospace;
+    /* gold for small text on paper — deep enough to hold 4.5:1 */
+    --gold-ink:#866317;
+    /* barely-there paper grain — documents only, never environments */
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    /* type scale — one set of sizes, referenced everywhere */
+    --t-title:clamp(32px,4vw,47px); --t-sub:16px; --t-h3:22px; --t-body:15px; --t-small:13.5px; --t-label:12px;
+    /* one motion vocabulary, site-wide */
+    --ease-out:cubic-bezier(.16,1,.3,1);
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+    --dur-fast:150ms; --dur-med:240ms; --dur-slow:400ms;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-padding-top:100px;}
+  @media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth;} }
+  /* the desk is neutral — the tenant accent is ink on the documents, never
+     ambient light in the room */
+  body{margin:0;font-family:var(--font-ui);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.6;}
+  h1,h2,h3{font-family:var(--font-display);margin:0;}
+  /* the ring traces each object's own geometry — squared on document
+     surfaces, rounded only where the element itself is */
+  :focus-visible{outline:2px solid var(--ring,var(--accent-deep));outline-offset:2px;}
+  /* light steel ring on ink surfaces, deep accent on light ones */
+  .arrive,section.sec--dark,.sidebar,footer.site{--ring:color-mix(in srgb, var(--accent) 40%, #fff);}
+  a{color:inherit;}
+
+  /* ===== Scroll progress ===== */
+  .progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;pointer-events:none;background:linear-gradient(90deg,var(--accent),var(--gold));transform-origin:left;transform:scaleX(0);}
+
+  /* ===== Top bar — the document's running header, not app chrome:
+     paper ground, double hairline foot rule, mono running title, the
+     exit set as a ticketed label ===== */
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(253,252,249,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);box-shadow:0 4px 0 -3px color-mix(in srgb, var(--line) 55%, transparent);}
+  .topbar-inner{max-width:1440px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;gap:18px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand img{height:30px;}
+  .crumb{display:flex;align-items:baseline;gap:12px;font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  .crumb .sep{font-weight:400;color:#C9CFDC;}
+  .crumb .co{color:var(--accent-deep);}
+  .exit{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:8px 13px;transition:color var(--dur-fast) ease, border-color var(--dur-fast) ease;}
+  .exit svg{transition:transform var(--dur-fast) ease;}
+  @media (hover:hover){ .exit:hover{color:var(--accent-deep);border-color:var(--accent);} .exit:hover svg{transform:translateX(2px);} }
+  .exit:active{transform:translateY(1px);}
+
+  /* ===== Wayfinder — the ledger rail's small-screen form: ruled cells on
+     the running header's paper, an accent underline as the marker (gold on
+     the money chapter), no pills ===== */
+  .wayfinder{display:none;}
+  @media (max-width:980px){
+    .wayfinder{position:sticky;top:54px;z-index:39;display:flex;gap:0;overflow-x:auto;padding:0 10px;background:rgba(253,252,249,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);scroll-behavior:smooth;scrollbar-width:none;}
+    .wayfinder::-webkit-scrollbar{display:none;}
+  }
+  .wayfinder a{flex-shrink:0;display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:0 16px;min-height:46px;border-bottom:2px solid transparent;transition:color var(--dur-fast) ease, background-color var(--dur-fast) ease, border-color var(--dur-fast) ease;}
+  .wayfinder a + a{border-left:1px solid var(--line);}
+  .wayfinder a.on{color:var(--accent-deep);border-bottom-color:var(--accent);background:linear-gradient(0deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 80%);}
+  .wayfinder a:last-child.on{color:var(--gold-ink);border-bottom-color:var(--gold);background:linear-gradient(0deg, rgba(244,189,80,.12), transparent 80%);}
+  .wayfinder .wf-ix{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:14px;line-height:1;color:var(--faint);transition:color var(--dur-fast) ease;}
+  .wayfinder a.on .wf-ix{color:var(--accent-deep);}
+  .wayfinder a:last-child .wf-ix{color:var(--gold-deep);}
+
+  /* ===== Layout ===== */
+  .layout{max-width:1440px;margin:0 auto;display:flex;align-items:flex-start;}
+  /* ===== Sidebar — a ledger rail, not an app nav: ruled rows, Fraunces
+     indices leading each entry, the accent as a sliding left-rule marker ===== */
+  .sidebar{position:sticky;top:65px;width:264px;flex-shrink:0;height:calc(100vh - 65px);background:var(--sidebar);color:#e7ecf5;padding:28px 22px;display:flex;flex-direction:column;overflow-y:auto;}
+  .sb-label{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#ABB7CA;padding:0 2px;margin:0 0 10px;}
+  .sb-nav{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;position:relative;border-top:1px solid rgba(255,255,255,.08);}
+  .sb-item{position:relative;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sb-link{display:flex;align-items:baseline;gap:14px;padding:14px 10px 14px 12px;color:#B3BFD1;text-decoration:none;font-size:14px;font-weight:500;position:relative;z-index:1;transition:color var(--dur-fast) ease, transform var(--dur-med) var(--ease-out);}
+  @media (hover:hover){ .sb-item:not(.active) .sb-link:hover{color:#cfd9e8;transform:translateX(2px);} }
+  .sb-item.active .sb-link{color:#fff;font-weight:600;}
+  /* the journey numerals lead each row — document indices, not app icons */
+  .sb-ix{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:16px;line-height:1;color:#8FA0B6;width:26px;flex-shrink:0;transition:color var(--dur-fast) ease;}
+  .sb-item.active .sb-ix{color:color-mix(in srgb, var(--accent) 40%, #fff);}
+  .sb-item:last-child .sb-ix{color:rgba(244,189,80,.7);}
+  .sb-item:last-child.active .sb-ix{color:var(--gold-bright);}
+  .sb-highlight{position:absolute;left:0;right:0;height:49px;background:linear-gradient(90deg, rgba(255,255,255,.10), transparent 75%);border-left:2px solid color-mix(in srgb, var(--accent) 40%, #fff);z-index:0;transition:transform var(--dur-slow) var(--ease-out);}
+  /* the marker turns gold when the reader reaches the money chapter */
+  .sb-nav:has(.sb-item:last-child.active) .sb-highlight{border-left-color:var(--gold);background:linear-gradient(90deg, rgba(244,189,80,.14), transparent 75%);}
+  .sb-link:focus-visible{outline-offset:-2px;}
+  @media (prefers-reduced-motion:reduce){
+    .sb-highlight{transition:none;}
+    .wayfinder{scroll-behavior:auto;}
+  }
+  .sb-foot{margin-top:auto;padding:16px 12px 4px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#ABB7CA;line-height:1.6;}
+  .sb-foot a{color:#C2CCDC;text-decoration:none;font-weight:600;}
+  /* small-screen stand-in for the sidebar contact block (sidebar hides at 980) */
+  .contact-inline{display:none;}
+
+  .content{flex:1;min-width:0;padding:28px 36px 0;}
+  .content-inner{max-width:none;}
+
+  /* ===== The continuous form =====
+     The four working chapters are pages of ONE document — a continuous-feed
+     form. The .form-run wrapper is the paper; sections are transparent;
+     between pages sit perforated fold lines with punched edge notches. The
+     ink bookends (.arrive, .sec--finale) stay their own dark sheets.
+     Canvas-level custom props (--tc title, --mc muted, --hair rules,
+     --flow-tile) retheme the components inside without one-off colors. */
+  section.sec{position:relative;padding:64px 56px 72px;margin-bottom:0;scroll-margin-top:96px;--tc:var(--text);--mc:var(--muted);--hair:var(--line);}
+  .form-run{position:relative;background:var(--paper);background-image:var(--grain);border:1px solid var(--line);border-radius:12px 12px 2px 2px;box-shadow:var(--shadow-sm);}
+  /* tractor-feed sprocket margins — the continuous form's punched edges,
+     running the full height of the paper, folds included */
+  .form-run::before,.form-run::after{content:"";position:absolute;top:14px;bottom:8px;width:26px;pointer-events:none;background-image:radial-gradient(circle 3.5px at 50% 50%, var(--bg) 2.6px, #C9CFDC 2.9px 3.3px, transparent 3.5px);background-size:26px 46px;background-position:center 8px;background-repeat:repeat-y;}
+  .form-run::before{left:0;border-right:1px solid color-mix(in srgb, var(--line) 65%, transparent);}
+  .form-run::after{right:0;border-left:1px solid color-mix(in srgb, var(--line) 65%, transparent);}
+  /* the printed running head at the top of the form */
+  .masthead{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:0 26px;padding:17px 30px 15px;border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+  /* page indices printed on the fold lines */
+  .fold span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--paper);padding:0 14px;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+  /* the last page tears off toward the ink finale — where the money is */
+  .run-tear{height:11px;margin-top:-1px;background-image:linear-gradient(135deg,var(--paper) 50%,transparent 50%),linear-gradient(-135deg,var(--paper) 50%,transparent 50%);background-size:16px 11px;background-repeat:repeat-x;filter:drop-shadow(0 3px 2px rgba(10,19,34,.12));}
+  section.sec--dark{overflow:hidden;border-radius:20px;background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);--tc:#fff;--mc:#C2CCDC;--hair:rgba(255,255,255,.13);--flow-tile:rgba(255,255,255,.07);box-shadow:var(--shadow-lift);}
+  .sec--dark::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);pointer-events:none;}
+  /* the money finale earns its hairline gold crest — a printed rule, not a glow */
+  section.sec--finale{box-shadow:inset 0 1px 0 rgba(244,189,80,.4), var(--shadow-lift);margin-bottom:32px;}
+  .sec > *{position:relative;z-index:1;}
+
+  /* ===== Engraved devices — the issued-instrument layer =====
+     Guilloché lathework (#glc-rose) and landmark numerals. The numerals are
+     the Fraunces signature finally at signature scale: engraved outlines
+     watermarked into the dead right region of each sheet. */
+  .rose{fill:none;stroke:currentColor;stroke-width:.5;}
+  /* right offset = sprocket rail (26px) + margin rule + true breathing room,
+     with allowance for the italic ink that overhangs the layout box */
+  .sec-num{position:absolute;z-index:0;top:22px;right:52px;margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;font-size:clamp(110px,15vw,190px);line-height:.85;color:rgba(10,19,34,.03);-webkit-text-stroke:1.5px rgba(10,19,34,.09);pointer-events:none;user-select:none;}
+  .sec--dark .sec-num{color:rgba(244,189,80,.03);-webkit-text-stroke-color:rgba(244,189,80,.20);}
+  .fin-rose{position:absolute;z-index:0;top:34%;right:-140px;width:460px;height:460px;color:rgba(244,189,80,.10);pointer-events:none;}
+  .seal{position:relative;}
+  .seal .rose{position:absolute;inset:0;width:100%;height:100%;}
+  .seal .seal-mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+  @media (max-width:860px){
+    .sec-num{top:12px;right:32px;font-size:clamp(84px,18vw,120px);-webkit-text-stroke-width:1.25px;}
+  }
+
+  /* fold — the perforated fold line between pages of the continuous form:
+     dashed rule, punched notches at both edges, drawn in as you reach it */
+  .fold{position:relative;height:56px;background:var(--paper);background-image:var(--grain);}
+  .fold::before{content:"";position:absolute;left:26px;right:26px;top:50%;border-top:1.5px dashed #B4C0D2;}
+  .fold::after{content:"";position:absolute;inset:0 -1px;pointer-events:none;background:radial-gradient(circle 7.5px at 0 50%, var(--bg) 5.5px, var(--line) 6px 6.75px, transparent 7.5px) no-repeat, radial-gradient(circle 7.5px at 100% 50%, var(--bg) 5.5px, var(--line) 6px 6.75px, transparent 7.5px) no-repeat;}
+  @media (prefers-reduced-motion:no-preference){
+    .fold::before{transform:scaleX(0);transform-origin:left center;transition:transform 800ms var(--ease-out);}
+    .fold.in::before{transform:scaleX(1);}
+  }
+  .gap{height:44px;}
+
+  /* ===== Arrival — the issuing ceremony, set as pure typography: the
+     member's employer name at landmark scale owning the full sheet ===== */
+  .arrive{position:relative;overflow:hidden;border-radius:20px;margin-bottom:0;padding:78px 56px 70px;background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 55%,var(--ink-3) 100%);color:#fff;box-shadow:var(--shadow-lift);}
+  .arrive::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 85%);pointer-events:none;}
+  .arrive > *{position:relative;z-index:1;}
+  .arrive h1{font-family:var(--font-display);font-weight:600;font-size:clamp(40px,5.2vw,66px);line-height:1.26;letter-spacing:-.01em;margin:8px 0 42px;}
+  /* the tenant name is the one blank on the form — filled in, ruled, and
+     captioned "employer": the member typed it into that blank one click ago.
+     The accent is its highlighter as well as its rule. The 1.26 leading is
+     load-bearing: the caption hangs into it, and the welcome sentence wraps
+     below the blank at every viewport width. */
+  .tname{position:relative;display:inline-block;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.01em;padding:0 .1em .02em;color:#fff;border-bottom:2.5px solid color-mix(in srgb, var(--accent) 45%, #fff);background:linear-gradient(180deg,transparent 68%,rgba(255,255,255,.16) 68%);}
+  /* decorative caption under the blank — a real element with aria-hidden,
+     so every browser both shows it and keeps it out of the a11y tree */
+  .tname .tcap{position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);font-family:var(--font-mono);font-style:normal;font-weight:600;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb, var(--accent) 20%, #aab6c9);white-space:nowrap;}
+  /* trust items as the ticket's fine-print manifest — same rule as the landing */
+  .a-chips{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:15px 2px;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);max-width:640px;}
+  .a-chip{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#b9c4d6;}
+  .a-chip .ic{display:flex;flex-shrink:0;}
+  .a-chip svg{width:14px;height:14px;stroke:color-mix(in srgb, var(--accent) 42%, #fff);fill:none;stroke-width:2;}
+  .a-chip.gold{color:var(--gold-bright);}
+  .a-chip.gold svg{stroke:var(--gold-bright);}
+  /* arrival choreography — a load-time rise, not a scroll fade */
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(16px);animation:rise 620ms var(--ease-out) forwards;}
+    .reveal.r2{animation-delay:90ms;} .reveal.r3{animation-delay:210ms;}
+    @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  }
+
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:var(--t-label);font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-deep);margin:0 0 14px;}
+  .eyebrow .mark{width:12px;height:10.5px;flex-shrink:0;}
+  .sec--dark .eyebrow,.arrive .eyebrow{color:color-mix(in srgb, var(--accent) 32%, #fff);}
+  /* journey index — the Fraunces numeral thread that strings the five sections
+     into one story; 05 wears gold because it labels the getting-paid step */
+  .jix{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:17px;line-height:1;letter-spacing:.02em;text-transform:none;color:var(--accent-deep);padding-right:12px;margin-right:4px;border-right:1px solid color-mix(in srgb, var(--accent) 30%, var(--hair,var(--line)));}
+  .sec--dark .jix{color:color-mix(in srgb, var(--accent) 45%, #fff);border-right-color:rgba(255,255,255,.22);}
+  .sec--finale .jix{color:var(--gold-bright);border-right-color:rgba(244,189,80,.4);}
+  .sec--finale .eyebrow{color:var(--gold-bright);}
+  h2.sec-title{font-weight:600;font-size:var(--t-title);letter-spacing:-.015em;line-height:1.12;margin-bottom:14px;color:var(--tc,var(--text));}
+  p.sec-sub{color:var(--mc,var(--muted));font-size:var(--t-sub);max-width:640px;margin:0 0 48px;}
+  .h3-sub{font-weight:600;font-size:var(--t-h3);margin:46px 0 10px;color:var(--tc,var(--text));}
+  .h3-sub--rule{margin-top:56px;padding-top:40px;border-top:1px solid var(--hair,var(--line));}
+  .sec--finale .h3-sub--rule{border-top-color:rgba(244,189,80,.26);}
+  .p-sub{color:var(--mc,var(--muted));font-size:var(--t-body);margin:0 0 6px;max-width:640px;}
+
+  /* dark-canvas rethemes for components that live in the finale */
+  .sec--dark .flow-num{border-color:rgba(255,255,255,.22);color:color-mix(in srgb, var(--accent) 38%, #fff);box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 8px 20px rgba(0,0,0,.35);}
+  .sec--dark .flow-step.now .flow-num{border-color:color-mix(in srgb, var(--accent) 45%, #fff);box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 24%, transparent),0 10px 24px rgba(0,0,0,.45);}
+  .sec--dark .flow-step.gold .flow-num{background:rgba(244,189,80,.12);border-color:rgba(244,189,80,.45);color:var(--gold-bright);}
+  .sec--dark .flow-step.gold.now .flow-num{border-color:var(--gold);box-shadow:0 0 0 4px rgba(244,189,80,.16),0 10px 24px rgba(0,0,0,.45);}
+  .sec--dark .pay-card h4{color:#fff;}
+  .sec--dark .pay-card p{color:#C2CCDC;}
+  .sec--dark .faq-q{color:#fff;}
+  .sec--dark .faq-q svg{stroke:color-mix(in srgb, var(--accent) 50%, #fff);}
+  .sec--dark .faq-a-inner{color:#C2CCDC;}
+
+  /* ===== Step flow — the one spine every numbered sequence rides =====
+     Fraunces italic numerals stay the site's typographic signature, but scaled
+     from landmark to wayfinding: a small tile on a rail that draws itself in
+     as you read. The instructional text owns the row; the number supports. */
+  .flow{list-style:none;margin:6px 0 0;padding:0;}
+  .flow-step{position:relative;display:grid;grid-template-columns:52px 1fr;column-gap:30px;padding:26px 0;}
+  .flow-step:first-child{padding-top:12px;}
+  /* rail: faint track + accent line that draws in, both hidden behind the tile */
+  .flow-step::before,.flow-step::after{content:"";position:absolute;left:25px;top:0;bottom:0;width:2px;}
+  .flow-step::before{background:var(--hair,var(--line));}
+  .flow-step::after{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 45%,transparent),var(--accent));transform-origin:top;}
+  .flow-step:first-child::before,.flow-step:first-child::after{top:38px;}
+  .flow-step:last-child::before,.flow-step:last-child::after{bottom:calc(100% - 52px);}
+  .flow-num{position:relative;z-index:1;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;font-size:21px;line-height:1;color:var(--accent-deep);font-variant-numeric:tabular-nums;background:var(--flow-tile,#fff);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:0 1px 0 rgba(255,255,255,.85) inset,var(--shadow-sm);transition:border-color 220ms ease,box-shadow 220ms ease;}
+  .flow-step.now .flow-num{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-tint),0 10px 22px -6px color-mix(in srgb,var(--accent) 38%,transparent);}
+  /* gold tiles: reserved for the steps where money reaches the member */
+  .flow-step.gold .flow-num{color:var(--gold-deep);background:linear-gradient(160deg,#fff 0%,#FDF7EA 100%);border-color:rgba(175,127,38,.5);}
+  .flow-step.gold.now .flow-num{border-color:var(--gold);box-shadow:0 0 0 4px rgba(244,189,80,.18),0 10px 22px -6px rgba(175,127,38,.45);}
+  .flow-body{padding-top:14px;}
+  .flow-body h3{font-weight:600;font-size:20px;letter-spacing:0;margin:0 0 8px;color:var(--tc,var(--text));}
+  .flow-body p{margin:0;color:var(--mc,var(--muted));font-size:15px;line-height:1.7;max-width:62ch;}
+  @media (max-width:860px){
+    .flow-step{grid-template-columns:42px 1fr;column-gap:16px;padding:20px 0;}
+    .flow-num{width:42px;height:42px;border-radius:11px;font-size:17px;}
+    .flow-step::before,.flow-step::after{left:20px;}
+    .flow-step:first-child::before,.flow-step:first-child::after{top:33px;}
+    .flow-step:last-child::before,.flow-step:last-child::after{bottom:calc(100% - 41px);}
+    .flow-body{padding-top:9px;}
+    .flow-body h3{font-size:18px;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .flow-step::after{transform:scaleY(0);transition:transform 900ms cubic-bezier(.16,1,.3,1) 180ms;}
+    .flow-step.in::after{transform:scaleY(1);}
+  }
+  /* compact flow — status timelines whose bodies are one-liners */
+  .flow--compact .flow-step{padding:16px 0;}
+  .flow--compact .flow-step:first-child{padding-top:12px;}
+  .flow--compact .flow-step:last-child::before,.flow--compact .flow-step:last-child::after{bottom:calc(100% - 42px);}
+  .flow--compact .flow-body{padding-top:11px;}
+  .flow--compact .flow-body h3{font-size:18px;margin-bottom:4px;}
+  .flow--compact .flow-body p{font-size:13.5px;}
+  @media (max-width:860px){
+    .flow--compact .flow-step{padding:14px 0;}
+    .flow--compact .flow-step:last-child::before,.flow--compact .flow-step:last-child::after{bottom:calc(100% - 35px);}
+    .flow--compact .flow-body{padding-top:8px;}
+  }
+
+  /* ===== Reimbursement certificate — the heart of the offer, promoted from
+     stat-card footnote to engraved instrument: double-rule frame, display-
+     scale Fraunces figures, gold lathework seal breaking the top edge. */
+  .paystub{position:relative;background:#fff;background-image:var(--grain);border:1.5px solid color-mix(in srgb, var(--gold) 50%, var(--line));border-radius:6px;box-shadow:var(--shadow-md);padding:26px 30px 22px;margin-top:52px;max-width:760px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+  .paystub::before{content:"";position:absolute;inset:5px;border:1px solid color-mix(in srgb, var(--gold) 32%, var(--line));border-radius:3px;pointer-events:none;}
+  .ps-seal{position:absolute;top:-26px;right:24px;width:86px;height:86px;rotate:8deg;color:var(--gold-deep);opacity:.92;filter:drop-shadow(0 6px 14px rgba(175,127,38,.30));}
+  .ps-seal .rose{stroke-width:1.7;}
+  .ps-seal .seal-mark{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:19px;line-height:1;}
+  .ps-head{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--line);}
+  .ps-head .mark{width:11px;height:9.5px;color:var(--accent);flex-shrink:0;}
+  .ps-row{display:flex;align-items:baseline;gap:12px;padding:16px 0 13px;border-bottom:1px dashed var(--line);}
+  .ps-lbl{font-size:13px;font-weight:600;color:var(--text);}
+  .ps-dots{flex:1;border-bottom:2px dotted #C7CFDC;transform:translateY(-4px);}
+  /* the figures wear the site's signature at display scale */
+  .ps-val{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:36px;line-height:1;color:var(--accent-deep);letter-spacing:-.01em;}
+  .ps-note{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+  .ps-row.gold .ps-lbl,.ps-row.gold .ps-note{color:var(--gold-ink);}
+  .ps-row.gold .ps-val{color:var(--gold-deep);}
+  .ps-row.gold .ps-dots{border-bottom-color:rgba(175,127,38,.45);}
+  .ps-foot{font-family:var(--font-ui);font-size:13px;color:var(--muted);line-height:1.65;padding-top:14px;}
+  @media (max-width:560px){
+    .paystub{padding:20px 18px 16px;}
+    .ps-seal{width:64px;height:64px;top:-20px;right:14px;}
+    .ps-seal .seal-mark{font-size:14px;}
+    .ps-val{font-size:29px;}
+    .ps-row{flex-wrap:wrap;row-gap:2px;}
+    .ps-note{flex-basis:100%;text-align:right;}
+  }
+
+
+  /* ===== Search (Check Your Drug) — the moment before the receipt =====
+     Desktop: search + suggestions on the left, a dashed "dock" on the right
+     marking where the savings preview will print. The dock yields to the
+     receipt via :has(); the receipt itself (.receipt*, .r-*) is untouched. */
+  .check-grid{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-rows:auto 1fr;grid-template-areas:"search out" "suggest out";column-gap:56px;align-items:start;}
+  .check-search{grid-area:search;}
+  .check-out{grid-area:out;min-height:236px;}
+  .check-suggest{grid-area:suggest;margin-top:36px;}
+  .dock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:236px;border:1.5px dashed color-mix(in srgb, var(--accent) 30%, var(--line));border-radius:16px;text-align:center;padding:32px;}
+  .dock svg{width:30px;height:26px;color:color-mix(in srgb, var(--accent) 55%, var(--faint));opacity:.75;}
+  .dock p{margin:0;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--faint);line-height:1.8;max-width:26ch;}
+  .check-grid:has(.receipt-wrap.printed) .dock{display:none;}
+  @media (max-width:1359px){
+    .check-grid{display:block;}
+    .check-out{min-height:0;}
+    .dock{display:none;}
+    .check-suggest{margin-top:28px;}
+    /* single column: the printed receipt presents as the page's object */
+    .receipt-wrap{margin-left:auto;margin-right:auto;}
+  }
+  /* touch: tap surfaces meet the floor */
+  @media (pointer:coarse){
+    .exit{padding:12px 16px;}
+  }
+  /* the search set as a counter window: one squared paper unit — ruled field
+     plus ink block — instead of a floating input and a gradient button */
+  .search-row{display:flex;gap:0;margin-bottom:0;max-width:640px;background:#fff;border:1.5px solid var(--line);border-radius:6px;box-shadow:var(--shadow-sm);transition:border-color var(--dur-med) ease, box-shadow var(--dur-med) ease;}
+  @media (hover:hover){ .search-row:hover:not(:focus-within){border-color:color-mix(in srgb, var(--accent) 45%, var(--line));} }
+  .search-row:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-tint), 0 14px 30px -12px color-mix(in srgb, var(--accent) 45%, transparent);}
+  .search-row .field{position:relative;flex:1;}
+  .search-row .field svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:19px;height:19px;stroke:var(--faint);fill:none;stroke-width:2;transition:stroke var(--dur-med) ease;}
+  .search-row .field:focus-within svg,
+  .search-row .field:has(input:not(:placeholder-shown)) svg{stroke:var(--accent);}
+  .search-row input{width:100%;height:62px;border:0;border-radius:5px 0 0 5px;padding:0 54px 0 50px;font-size:17.5px;font-family:var(--font-ui);outline:none;background:transparent;caret-color:var(--accent);}
+  .search-row button{width:62px;height:62px;flex-shrink:0;border:0;border-radius:0 4px 4px 0;background:linear-gradient(165deg,var(--ink-3) 0%, var(--ink) 100%);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 0 rgba(255,255,255,.08) inset;transition:filter var(--dur-fast) ease, transform var(--dur-fast) ease;}
+  @media (hover:hover){ .search-row button:hover{filter:brightness(1.35);} }
+  .search-row button:active{filter:brightness(1.1);transform:translateY(1px);}
+  .search-row button svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.2;}
+  /* return-key affordance — same device the landing lookup carries */
+  .search-row .enter-hint{position:absolute;right:14px;top:50%;transform:translateY(-50%) translateX(4px);font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--muted);background:#F1F3F8;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:3px 8px;pointer-events:none;opacity:0;transition:opacity var(--dur-med) ease, transform var(--dur-med) var(--ease-out);}
+  .search-row .field:has(input:not(:placeholder-shown)) .enter-hint{opacity:1;transform:translateY(-50%) translateX(0);}
+  @media (max-width:640px){ .search-row .enter-hint{display:none;} }
+  /* the counter window nudges on an empty submission — never silent */
+  @media (prefers-reduced-motion:no-preference){
+    .search-row.nudge{animation:nudge 420ms ease;}
+    @keyframes nudge{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}55%{transform:translateX(4px);}80%{transform:translateX(-1px);}}
+    /* strength switch: the lines below the drug re-ink like a fresh print
+       pass — the identity rows and the stamp hold steady */
+    .receipt.reprint .r-tag,.receipt.reprint .r-line,.receipt.reprint .r-rule,.receipt.reprint .r-dash,.receipt.reprint .r-real,.receipt.reprint .r-try,.receipt.reprint .r-cta,.receipt.reprint .r-foot{animation:reprint-settle 240ms ease;}
+    @keyframes reprint-settle{from{opacity:.3;}to{opacity:1;}}
+  }
+  .chip-label{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  /* page-level suggestions as a typeset index — ruled entries in two columns;
+     the receipt's strength chips keep their pill form untouched */
+  .check-suggest .chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;max-width:640px;border-top:1px solid var(--line);}
+  .check-suggest .chip{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 2px;justify-content:flex-start;font-size:14px;transition:background-color 150ms ease, color 150ms ease;}
+  .check-suggest .chip:nth-child(even){padding-left:18px;border-left:1px solid var(--line);}
+  @media (hover:hover){ .check-suggest .chip:hover{background:var(--accent-tint);border-color:var(--line);color:var(--accent-deep);} }
+  .check-suggest .chip:active{transform:translateY(1px);background:color-mix(in srgb, var(--accent) 14%, #fff);}
+  .check-suggest .chip:focus-visible{outline-offset:-2px;}
+  .check-suggest .chip svg{stroke:color-mix(in srgb, var(--accent) 65%, var(--faint));}
+  @media (max-width:560px){
+    .check-suggest .chips{grid-template-columns:1fr;}
+    .check-suggest .chip:nth-child(even){padding-left:2px;border-left:0;}
+  }
+  /* page-level suggestion chips only — receipt strength chips keep their own feel.
+     Hover is an ink change, not a lift: paper doesn't levitate. */
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-family:var(--font-ui);font-size:13.5px;font-weight:500;line-height:1.2;color:var(--text);cursor:pointer;transition:background-color 150ms ease, border-color 150ms ease, transform 150ms ease;}
+  @media (hover:hover){ .chip:hover{background:var(--accent-tint);border-color:var(--accent);} }
+  .chip:active{transform:scale(.97);}
+  .chip svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2;}
+
+  /* ===== Savings receipt — prints out under the drug lookup ===== */
+  .receipt-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows 620ms cubic-bezier(.16,1,.3,1);max-width:430px;margin-top:28px;}
+  .receipt-wrap.printed{grid-template-rows:1fr;}
+  .receipt-clip{overflow:hidden;min-height:0;padding:0 6px;}
+  .receipt{position:relative;background:#fff;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;box-shadow:var(--shadow-md);padding:20px 22px 22px;margin-bottom:16px;font-family:var(--font-mono);font-size:13px;line-height:1.5;font-variant-numeric:tabular-nums;}
+  /* perforated tear-off bottom edge */
+  .receipt::after{content:"";position:absolute;top:100%;left:0;right:0;height:12px;background-image:linear-gradient(135deg,#fff 50%,transparent 50%),linear-gradient(-135deg,#fff 50%,transparent 50%);background-size:14px 12px;background-repeat:repeat-x;filter:drop-shadow(0 3px 2px rgba(10,19,34,.1));}
+  .r-head{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+  .r-head .mark{width:11px;height:9.5px;color:var(--accent);flex-shrink:0;}
+  .r-drug{font-size:15px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+  /* real-price line under the drug name (populated from data/drug-prices.json) */
+  .r-real{margin:5px 0 0;font-family:var(--font-ui);font-size:12px;color:var(--muted);line-height:1.6;}
+  .r-real strong{font-family:var(--font-mono);font-weight:700;color:var(--accent-deep);}
+  .r-real a{color:var(--accent-deep);font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+  .r-real .r-variants{display:block;color:var(--faint);}
+  /* strength picker — reuses the page chip style, receipt-sized */
+  .r-strengths{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px;}
+  .r-strengths .chip{padding:5px 12px;font-size:12px;}
+  .r-strengths .chip.sel{background:var(--accent-tint);border-color:var(--accent);color:var(--accent-deep);font-weight:700;}
+  .r-try .r-try-field + label{margin-top:10px;}
+  .r-hint{font-family:var(--font-ui);font-size:11px;color:var(--faint);margin:6px 0 0;}
+  .r-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-deep);border:1px solid var(--accent);border-radius:4px;padding:2px 7px;margin:6px 0 14px;opacity:.85;}
+  .r-line{display:flex;justify-content:space-between;gap:16px;padding:4px 0;}
+  .r-line .val{font-weight:600;white-space:nowrap;}
+  .r-line.muted,.r-line.muted .val{color:var(--faint);font-weight:500;}
+  .r-line.accent .val{color:var(--accent-deep);}
+  .r-line.gold .val{color:var(--gold-deep);}
+  .r-line.net{font-size:15px;}
+  .r-line.net span{font-weight:700;}
+  .r-dash{border-top:1.5px dashed var(--line);margin:10px 0;}
+  .r-rule{border-top:2px solid var(--text);margin:10px 0 8px;}
+  .r-stamp{display:inline-block;margin-top:16px;padding:7px 12px;border:1.5px solid var(--gold-deep);border-radius:6px;color:var(--gold-deep);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-4deg);}
+  .r-stamp .mark{width:10px;height:8.5px;vertical-align:-1px;margin-right:3px;}
+  .r-foot{margin:14px 0 0;font-size:11px;color:var(--faint);line-height:1.55;font-family:var(--font-ui);}
+  /* try-it: the member supplies their own checkout amount; we do the math live */
+  .r-try{margin-top:14px;padding-top:12px;border-top:1.5px dashed var(--line);}
+  .r-try label{display:block;font-family:var(--font-ui);font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;}
+  .r-try-field{display:flex;align-items:center;gap:2px;max-width:170px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;background:var(--bg);transition:border-color 150ms ease, box-shadow 150ms ease;}
+  .r-try-field:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint);background:#fff;}
+  .r-try-field .cur{color:var(--faint);font-weight:600;}
+  .r-try-field input{width:100%;border:0;outline:none;background:none;height:38px;font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+  .r-cap{display:none;font-family:var(--font-ui);font-size:11px;color:var(--gold-deep);margin-top:6px;}
+  .r-cap.show{display:block;}
+  /* prominent real-price CTA */
+  .r-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px 16px;border-radius:8px;background:linear-gradient(160deg,var(--accent) 0%, var(--accent-deep) 100%);color:#fff;text-decoration:none;font-family:var(--font-ui);font-size:13.5px;font-weight:700;text-align:center;box-shadow:0 6px 16px color-mix(in srgb, var(--accent) 30%, transparent);transition:filter 150ms ease, transform 120ms ease;}
+  @media (hover:hover){ .r-cta:hover{filter:brightness(1.08);transform:translateY(-1px);} }
+  .r-cta svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2.4;flex-shrink:0;}
+  @media (prefers-reduced-motion:no-preference){
+    .receipt .r-stamp{opacity:0;transform:rotate(-12deg) scale(1.25);}
+    .printed .receipt .r-stamp{opacity:1;transform:rotate(-4deg) scale(1);transition:opacity 240ms ease 500ms, transform 340ms cubic-bezier(.34,1.56,.64,1) 500ms;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .receipt-wrap{transition:none;}
+  }
+
+  /* ===== Callout — a ruled margin note: the accent is the pen, not a wash ===== */
+  .callout{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px 10px 10px 4px;padding:18px 20px;margin-top:8px;}
+  .callout svg{width:20px;height:20px;stroke:var(--accent-deep);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;}
+  .callout strong{display:block;color:var(--text);font-size:15px;margin-bottom:3px;}
+  .callout p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.6;}
+
+  .btn{display:inline-flex;align-items:center;gap:9px;height:52px;padding:0 24px;border:0;border-radius:var(--radius-md);font-family:var(--font-ui);font-size:15px;font-weight:700;color:#fff;cursor:pointer;text-decoration:none;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--accent) 0%, var(--accent-deep) 100%);box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 8px 22px color-mix(in srgb, var(--accent) 30%, transparent);transition:filter var(--dur-fast) ease, transform var(--dur-fast) ease, box-shadow var(--dur-med) ease;margin-top:26px;}
+  @media (hover:hover){
+    .btn:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 12px 28px color-mix(in srgb, var(--accent) 40%, transparent);}
+  }
+  .btn:focus-visible{filter:brightness(1.07);box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 12px 28px color-mix(in srgb, var(--accent) 40%, transparent);}
+  /* the stamp: every press sets the object down into the paper */
+  .btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 3px 10px color-mix(in srgb, var(--accent) 28%, transparent);}
+
+  /* ===== Elevated card ===== */
+  .elevcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-md);padding:28px 30px;}
+
+  /* ===== Claim ticket — the landing stub's grammar at the moment of highest
+     intent: a perforated ticket you take to the counter. Tears when pulled. */
+  .ticket{position:relative;display:inline-flex;align-items:stretch;margin-top:26px;background:#fff;background-image:var(--grain);border:1.5px solid var(--gold);text-decoration:none;color:var(--text);border-radius:8px;rotate:-.6deg;filter:drop-shadow(0 3px 6px rgba(134,99,23,.22));transition:rotate var(--dur-med) var(--ease-out), translate var(--dur-med) var(--ease-out), filter var(--dur-med) ease, border-color var(--dur-fast) ease;
+    mask-image:radial-gradient(circle at 122px 0, transparent 5px, #000 6px),radial-gradient(circle at 122px 100%, transparent 5px, #000 6px);
+    -webkit-mask-image:radial-gradient(circle at 122px 0, transparent 5px, #000 6px),radial-gradient(circle at 122px 100%, transparent 5px, #000 6px);
+    mask-composite:intersect;-webkit-mask-composite:source-in;}
+  /* the ticket wears gold — the edge, perforation, and arrow are the money
+     inks; only the issuer's wordmark on its chip stays neutral, identical
+     across tenants */
+  .tk-stub{display:flex;align-items:center;justify-content:center;width:122px;border-right:1.5px dashed rgba(175,127,38,.55);background:#FEF8ED;border-radius:6px 0 0 6px;}
+  .tk-stub img{height:14px;width:auto;display:block;}
+  .tk-body{display:flex;align-items:center;gap:10px;padding:16px 24px;font-family:var(--font-ui);font-size:15.5px;font-weight:700;}
+  .tk-body .arrow{color:var(--gold-deep);transition:transform var(--dur-fast) ease;}
+  @media (hover:hover){
+    .ticket:hover{rotate:0deg;translate:0 -2px;border-color:var(--gold-deep);filter:drop-shadow(0 10px 18px rgba(175,127,38,.4));}
+    .ticket:hover .arrow{transform:translateX(3px);}
+  }
+  .ticket:focus-visible{rotate:0deg;border-color:var(--gold-deep);filter:drop-shadow(0 10px 18px rgba(175,127,38,.4));}
+  .ticket:active{translate:0 1px;filter:drop-shadow(0 1px 3px rgba(134,99,23,.28));}
+  @media (prefers-reduced-motion:no-preference){
+    .ticket.tearing{animation:tk-tear 460ms var(--ease-out);}
+    @keyframes tk-tear{30%{translate:10px -12px;rotate:2deg;}100%{translate:0 0;rotate:-.6deg;}}
+  }
+  @media (max-width:560px){
+    .ticket{mask-image:radial-gradient(circle at 98px 0, transparent 5px, #000 6px),radial-gradient(circle at 98px 100%, transparent 5px, #000 6px);
+      -webkit-mask-image:radial-gradient(circle at 98px 0, transparent 5px, #000 6px),radial-gradient(circle at 98px 100%, transparent 5px, #000 6px);}
+    .tk-stub{width:98px;}
+    .tk-stub img{height:12px;}
+    .tk-body{padding:14px 18px;font-size:14.5px;}
+  }
+
+  .checklist{margin-top:40px;max-width:640px;}
+  .checklist h4{font-size:16.5px;margin-bottom:16px;}
+  .checklist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .checklist li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text);}
+  .checklist svg{width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:2.2;flex-shrink:0;}
+
+  /* ===== Payment cards — each method wears its own identity =====
+     Custom in-house glyphs on brand-inspired color chips (not official marks):
+     Venmo blue, PayPal blue duo, Cash App green, house slate for ACH, Visa
+     indigo. Chip hues are scoped to --pm/--pm-deep so nothing leaks out. */
+  /* payment methods as a ruled ledger, not a card grid — each method keeps
+     its custom glyph chip; the rows read as entries in the statement */
+  .pay-grid{display:block;margin-top:10px;max-width:840px;border-top:1px solid var(--hair,var(--line));}
+  .pay-card{display:grid;grid-template-columns:44px 1fr;align-items:center;column-gap:18px;padding:15px 0;border-bottom:1px solid var(--hair,var(--line));}
+  .pay-card > div{display:grid;grid-template-columns:190px 1fr;align-items:baseline;column-gap:22px;}
+  @media (max-width:700px){
+    .pay-card > div{display:block;}
+    .pay-card h4{margin-bottom:2px;}
+  }
+  /* engraved plates, not app buttons: flat ink ground, hairline inner rule,
+     each glyph struck in its method's ink */
+  .pay-ic{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);outline:1px solid rgba(255,255,255,.07);outline-offset:-5px;}
+  .pay-ic svg{width:20px;height:20px;stroke:color-mix(in srgb, var(--pm) 78%, #fff);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .pm-venmo{--pm:#3D95CE;--pm-deep:#2470A8;}
+  .pm-paypal{--pm:#009CDE;--pm-deep:#003087;}
+  .pm-cash{--pm:#00D632;--pm-deep:#009424;}
+  .pm-ach{--pm:#5C7899;--pm-deep:#2E4A6B;}
+  .pm-check{--pm:#5C7899;--pm-deep:#2E4A6B;}
+  .pm-visa{--pm:#4A5BD4;--pm-deep:#1A1F71;}
+  .pm-visa svg .gold-detail{stroke:var(--gold-bright);}
+  .pay-card h4{font-size:15px;margin:0;}
+  .pay-card p{font-size:13.5px;color:var(--muted);margin:0;}
+
+
+  /* ===== FAQ — printed footnotes with Fraunces indices, not floating cards ===== */
+  .faq{display:block;margin-top:26px;max-width:840px;counter-reset:faq;border-top:1px solid var(--hair,var(--line));}
+  .faq-item{counter-increment:faq;background:none;border:0;border-bottom:1px solid var(--hair,var(--line));border-radius:0;box-shadow:none;overflow:hidden;transition:border-color var(--dur-med) ease;}
+  .faq-item.open{border-bottom-color:color-mix(in srgb, var(--accent) 45%, transparent);}
+  .faq-q{width:100%;display:flex;align-items:center;justify-content:flex-start;gap:0;padding:18px 2px;background:none;border:0;text-align:left;font-family:var(--font-ui);font-size:15.5px;font-weight:600;color:var(--text);cursor:pointer;transition:background-color var(--dur-fast) ease;}
+  .faq-q::before{content:counter(faq) ".";font-family:var(--font-display);font-style:italic;font-weight:600;font-size:17px;line-height:1;color:color-mix(in srgb, var(--accent) 38%, #fff);width:34px;flex-shrink:0;}
+  @media (hover:hover){ .faq-item:not(.open) .faq-q:hover{background:color-mix(in srgb, var(--accent) 5%, transparent);} }
+  .faq-q:active{background:color-mix(in srgb, var(--accent) 9%, transparent);}
+  .faq-q:focus-visible{outline-offset:-2px;}
+  .faq-q svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2.2;flex-shrink:0;margin-left:auto;transition:transform var(--dur-med) var(--ease-out);}
+  .faq-item.open .faq-q svg{transform:rotate(180deg);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height var(--dur-slow) var(--ease-out);}
+  .faq-a-inner{padding:0 30px 20px 34px;color:var(--muted);font-size:15px;line-height:1.65;}
+
+  /* ===== Remittance slip — the detachable strip at the bottom of the ink
+     statement: perforated top edge, punched notches, paper on ink ===== */
+  .remit{position:relative;margin:72px -56px -72px;padding:46px 56px 52px;background:var(--paper);background-image:var(--grain);color:var(--text);text-align:center;border-top:1.5px dashed #B9C4D6;
+    mask-image:radial-gradient(circle at 26px 0, transparent 6px, #000 7px),radial-gradient(circle at calc(100% - 26px) 0, transparent 6px, #000 7px);
+    -webkit-mask-image:radial-gradient(circle at 26px 0, transparent 6px, #000 7px),radial-gradient(circle at calc(100% - 26px) 0, transparent 6px, #000 7px);
+    mask-composite:intersect;-webkit-mask-composite:source-in;}
+  .remit h3{font-weight:600;font-size:28px;letter-spacing:-.01em;margin-bottom:12px;color:var(--text);}
+  .remit p{color:var(--muted);font-size:var(--t-body);max-width:460px;margin:0 auto 26px;}
+  .remit .btn{margin-top:0;}
+
+  /* ===== Footer — dark brand anchor with the instrument's foil edge and
+     a lathework watermark, same construction as the landing page ===== */
+  footer.site{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--ink-2) 0%,var(--ink) 100%);color:#C2CCDC;box-shadow:inset 0 1px 0 rgba(244,189,80,.26);}
+  .foot-rose{position:absolute;right:-150px;bottom:-170px;width:480px;height:480px;color:rgba(244,189,80,.09);pointer-events:none;}
+  footer.site::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(0deg,rgba(0,0,0,.75),transparent 80%);-webkit-mask-image:linear-gradient(0deg,rgba(0,0,0,.75),transparent 80%);pointer-events:none;}
+  .foot-inner{position:relative;max-width:1440px;margin:0 auto;padding:0 32px;}
+  .brand-plate{display:inline-flex;align-items:center;background:linear-gradient(180deg,#fefdfb,#FCF3E1);border:1px solid rgba(244,189,80,.55);border-radius:12px;padding:9px 18px;box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 4px 14px rgba(0,0,0,.4);}
+  .brand-plate img{height:26px;width:auto;display:block;}
+  .foot-top{display:flex;align-items:flex-start;justify-content:space-between;gap:56px;padding:64px 0 48px;}
+  .foot-brand{max-width:560px;}
+  .plate-powered{display:inline-flex;align-items:center;margin-left:14px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#b9c4d6;border-left:1px solid rgba(244,189,80,.45);padding:3px 0 3px 14px;white-space:nowrap;vertical-align:middle;}
+  .foot-desc{margin:24px 0 0;font-size:15px;line-height:1.75;color:#C2CCDC;}
+  .foot-desc strong{color:#e7ecf5;font-weight:600;}
+  .foot-contact{text-align:right;flex-shrink:0;}
+  .foot-lbl{display:block;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#ABB7CA;}
+  .foot-mail{display:inline-block;margin:12px 0 8px;font-family:var(--font-mono);font-size:15.5px;font-weight:500;letter-spacing:0;color:#DBE3EF;text-decoration:none;border-bottom:1px solid rgba(154,184,208,.45);padding-bottom:3px;transition:color var(--dur-fast) ease,border-color var(--dur-fast) ease;}
+  @media (hover:hover){ .foot-mail:hover{color:#fff;border-color:#fff;} }
+  .foot-hint{display:block;font-size:13.5px;color:#ABB7CA;}
+  .foot-rule{height:1px;background:rgba(255,255,255,.09);}
+  .foot-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;padding:24px 0 32px;font-size:13.5px;color:#ABB7CA;}
+  .foot-tag{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
+  .foot-tag .mark{width:11px;height:9.5px;color:var(--accent);flex-shrink:0;}
+  @media (max-width:760px){
+    .foot-top{flex-direction:column;gap:34px;padding:48px 0 38px;}
+    .foot-contact{text-align:left;}
+    .foot-meta{flex-direction:column;align-items:flex-start;}
+  }
+
+  @media (max-width:980px){
+    html{scroll-padding-top:120px;}
+    .sidebar{display:none;}
+    .contact-inline{display:block;margin:20px 0 4px;padding:16px 2px 0;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.6;}
+    .contact-inline a{color:var(--text);text-decoration:none;font-weight:600;}
+    .topbar-inner{padding:14px 16px;}
+    .content{padding:16px 12px 0;}
+    section.sec{padding:48px 24px 56px;margin-bottom:0;scroll-margin-top:118px;}
+    section.sec--dark{border-radius:16px;}
+    section.sec--finale{margin-bottom:20px;}
+    .form-run{border-radius:10px 10px 2px 2px;}
+    .arrive{border-radius:16px;padding:56px 24px 52px;margin-bottom:0;}
+    .fold{height:44px;}
+    .gap{height:32px;}
+    .remit{margin:56px -24px -56px;padding:40px 24px 46px;}
+    .a-chips{flex-direction:column;align-items:flex-start;gap:10px;padding:14px 2px;}
+    .a-chip{font-size:10.5px;}
+    .check-suggest .chip{padding:13px 2px;}
+    .remit h3{font-size:25px;}
+    .form-run::before,.form-run::after{width:16px;background-size:16px 40px;background-image:radial-gradient(circle 2.75px at 50% 50%, var(--bg) 2px, #C9CFDC 2.3px 2.6px, transparent 2.75px);}
+    .masthead{margin:0 16px;padding:13px 8px 11px;letter-spacing:.12em;font-size:9.5px;}
+  }
+
+  /* ===== Ledger page — the Submit chapter set as ruled document rows =====
+     Lives on the continuous form's paper; only its row treatment differs. */
+  .sec--ledger .flow-step{grid-template-columns:44px 1fr;column-gap:18px;padding:22px 0;border-top:1px solid var(--line);}
+  .sec--ledger .flow-step:first-child{border-top:0;padding-top:10px;}
+  .sec--ledger .flow-step::before,.sec--ledger .flow-step::after{content:none;}
+  .sec--ledger .flow-num{width:auto;height:auto;border:0;background:none;box-shadow:none;border-radius:0;align-items:flex-start;justify-content:flex-start;padding-top:7px;font-family:var(--font-mono);font-style:normal;font-weight:600;font-size:13px;color:var(--faint);transition:color 220ms ease;}
+  .sec--ledger .flow-step.now .flow-num{border:0;box-shadow:none;color:var(--accent-deep);}
+  .sec--ledger .flow-body{padding-top:0;}
+  @media (max-width:860px){
+    .sec--ledger .flow-step{grid-template-columns:34px 1fr;column-gap:12px;padding:18px 0;}
+  }
+
+  @media (max-width:640px){
+    .topbar-inner{padding:14px 16px;gap:12px;}
+    .brand img{height:22px;}
+    .crumb{min-width:0;letter-spacing:.1em;}
+    .crumb .co{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
+    /* room for the employer caption when the name wraps mid-headline */
+    .arrive h1{line-height:1.26;}
+    .tname .tcap{top:calc(100% + 3px);font-size:9px;}
+  }
+
+  /* touch: the strength chips grow to a tappable size — placed after the
+     receipt's base chip rules so the override wins; mechanism untouched */
+  @media (pointer:coarse){
+    .r-strengths{gap:8px;}
+    .r-strengths .chip{padding:9px 14px;}
+  }
+</style>
+</head>
+<body>
+<!-- Maverick mark — the nested triangle from the logo's A, used wherever an eyebrow label needs its glyph -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="mvk-mark" viewBox="0 0 14 12"><path d="M7 1.1L13 11.1H1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 5.3L10 10.2H4z" fill="currentColor"/></symbol>
+  <!-- guilloché rosette — banknote lathework; stroke/fill inherit from the instance -->
+  <symbol id="glc-rose" viewBox="0 0 200 200"><g transform="translate(100,100)"><circle r="97"/><circle r="93"/><circle r="86"/><circle r="58"/><circle r="30"/><ellipse rx="86" ry="30"/><ellipse rx="86" ry="30" transform="rotate(10)"/><ellipse rx="86" ry="30" transform="rotate(20)"/><ellipse rx="86" ry="30" transform="rotate(30)"/><ellipse rx="86" ry="30" transform="rotate(40)"/><ellipse rx="86" ry="30" transform="rotate(50)"/><ellipse rx="86" ry="30" transform="rotate(60)"/><ellipse rx="86" ry="30" transform="rotate(70)"/><ellipse rx="86" ry="30" transform="rotate(80)"/><ellipse rx="86" ry="30" transform="rotate(90)"/><ellipse rx="86" ry="30" transform="rotate(100)"/><ellipse rx="86" ry="30" transform="rotate(110)"/><ellipse rx="86" ry="30" transform="rotate(120)"/><ellipse rx="86" ry="30" transform="rotate(130)"/><ellipse rx="86" ry="30" transform="rotate(140)"/><ellipse rx="86" ry="30" transform="rotate(150)"/><ellipse rx="86" ry="30" transform="rotate(160)"/><ellipse rx="86" ry="30" transform="rotate(170)"/></g></symbol>
+</defs></svg>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><img src="alkeme-rx-redirect-logo.png" alt="Alkeme Rx Redirect logo" /></a>
+    <span class="crumb"><span class="sep">/</span><span class="co">Verita Global</span></span>
+    <a class="exit" href="index.html">Exit <svg viewBox="0 0 24 24" width="14" height="14" style="stroke:currentColor;fill:none;stroke-width:2;vertical-align:-2px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  </div>
+</header>
+
+<nav class="wayfinder" aria-label="Sections">
+  <a href="#sec-how" class="on"><span class="wf-ix" aria-hidden="true">01</span>How It Works</a>
+  <a href="#sec-check"><span class="wf-ix" aria-hidden="true">02</span>Check Your Drug</a>
+  <a href="#sec-register"><span class="wf-ix" aria-hidden="true">03</span>Register on Cost Plus</a>
+  <a href="#sec-submit"><span class="wf-ix" aria-hidden="true">04</span>Submit a Receipt</a>
+  <a href="#sec-paid"><span class="wf-ix" aria-hidden="true">05</span>How You Get Paid</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sb-label">Sections</p>
+    <ul class="sb-nav" id="sbNav">
+      <div class="sb-highlight" id="sbHighlight"></div>
+      <li class="sb-item active" data-target="sec-how"><a class="sb-link" href="#sec-how"><span class="sb-ix" aria-hidden="true">01</span>How It Works</a></li>
+      <li class="sb-item" data-target="sec-check"><a class="sb-link" href="#sec-check"><span class="sb-ix" aria-hidden="true">02</span>Check Your Drug</a></li>
+      <li class="sb-item" data-target="sec-register"><a class="sb-link" href="#sec-register"><span class="sb-ix" aria-hidden="true">03</span>Register on Cost Plus</a></li>
+      <li class="sb-item" data-target="sec-submit"><a class="sb-link" href="#sec-submit"><span class="sb-ix" aria-hidden="true">04</span>Submit a Receipt</a></li>
+      <li class="sb-item" data-target="sec-paid"><a class="sb-link" href="#sec-paid"><span class="sb-ix" aria-hidden="true">05</span>How You Get Paid</a></li>
+    </ul>
+    <div class="sb-foot">Questions? Contact Maverick Administrators at <a href="mailto:RxRedirect@mavericktpa.com">RxRedirect@mavericktpa.com</a> or call (800) 341-9000.</div>
+  </aside>
+
+  <main class="content">
+    <div class="content-inner">
+
+      <section class="arrive" aria-label="Member portal welcome">
+        <p class="eyebrow reveal"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Alkeme Rx Redirect</p>
+        <h1 class="reveal r2">Welcome, <span class="tname">Verita Global<span class="tcap" aria-hidden="true">employer</span></span> members to your Alkeme Rx Redirect Member Portal.</h1>
+        <div class="a-chips reveal r3">
+          <span class="a-chip"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>Full reimbursement</span>
+          <span class="a-chip gold"><span class="ic"><svg viewBox="0 0 24 24"><path d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7S9 2 6 2a2.5 2.5 0 000 5h6z"/><path d="M12 7s3-5 6-5a2.5 2.5 0 010 5h-6z"/></svg></span>Savings Reward &mdash; up to $50 per fill</span>
+          <span class="a-chip"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>Covered by your employer</span>
+        </div>
+      </section>
+
+      <div class="gap" aria-hidden="true"></div>
+
+      <div class="form-run">
+
+      <div class="masthead" aria-hidden="true"><span>Alkeme Rx Redirect</span><span>Member guide &middot; Page 01 of 04</span></div>
+
+      <section class="sec" id="sec-how">
+        <span class="sec-num" aria-hidden="true">01</span>
+        <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">01</span>Program Overview</p>
+        <h2 class="sec-title">How the program works</h2>
+        <p class="sec-sub">Four simple steps to save on your prescriptions and earn a Savings Reward.</p>
+
+        <ol class="flow">
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Check if your drug is available</h3><p>Use the drug lookup tool on this page or browse costplusdrugs.com to see if your medication is in the Cost Plus formulary. Most common generics are available at dramatically lower prices.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Order directly on Cost Plus Drugs</h3><p>Visit costplusdrugs.com, create a free account, and order your prescription. You&rsquo;ll pay out of pocket at checkout — the prices are already a fraction of what you&rsquo;d pay at a traditional pharmacy.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Submit your receipt</h3><p>After your order arrives, upload your Cost Plus receipt through our simple reimbursement form. Include the order confirmation showing the drug name, quantity, and amount paid.</p></div></li>
+          <li class="flow-step gold"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Get fully reimbursed + earn a Savings Reward</h3><p>Claims are processed promptly. Payments are issued on a weekly basis. You&rsquo;ll receive a payment for 100% of your out-of-pocket cost (prescription + shipping) PLUS a <strong style="color:var(--gold-deep)">Savings Reward (Redirect Participation Reimbursement)</strong> — 10% of your prescription cost, up to $50 per fill.</p></div></li>
+        </ol>
+
+        <div class="paystub">
+          <span class="seal ps-seal" aria-hidden="true"><svg class="rose"><use href="#glc-rose"/></svg><span class="seal-mark">M</span></span>
+          <div class="ps-head"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>What you get reimbursed</div>
+          <div class="ps-row"><span class="ps-lbl">Prescription cost</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">100%</span><span class="ps-note">reimbursed</span></div>
+          <div class="ps-row"><span class="ps-lbl">Shipping cost</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">100%</span><span class="ps-note">reimbursed</span></div>
+          <div class="ps-row gold"><span class="ps-lbl">Savings Reward (Redirect Participation)</span><span class="ps-dots" aria-hidden="true"></span><span class="ps-val">10%</span><span class="ps-note">up to $50 per fill</span></div>
+          <div class="ps-foot">Claims are processed promptly. Payments are issued on a weekly basis via <span class="gold-word">ACH direct deposit, physical check, or the Tremendous platform (Venmo, PayPal, Cash App, or Prepaid Visa)</span>.</div>
+        </div>
+      </section>
+
+      <div class="fold" aria-hidden="true"><span>Page 02 of 04</span></div>
+
+      <section class="sec" id="sec-check">
+        <span class="sec-num" aria-hidden="true">02</span>
+        <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">02</span>Drug Lookup</p>
+        <h2 class="sec-title">Check if your drug is covered</h2>
+        <p class="sec-sub">Enter your medication name to see if it&rsquo;s available on Cost Plus Drugs and how much you could save.</p>
+
+        <div class="check-grid">
+        <div class="check-search">
+        <div class="search-row">
+          <div class="field"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg><input id="drugSearch" type="text" placeholder="e.g. Metformin, Atorvastatin, Lisinopril…" /><kbd class="enter-hint" aria-hidden="true">&#9166;</kbd></div>
+          <button type="button" aria-label="See your savings"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></button>
+        </div>
+        </div>
+
+        <div class="check-out">
+        <div class="dock" aria-hidden="true">
+          <svg aria-hidden="true"><use href="#mvk-mark"/></svg>
+          <p>Search a medication &mdash; your savings preview prints here</p>
+        </div>
+        <div class="receipt-wrap" id="receiptWrap" aria-live="polite">
+          <div class="receipt-clip"><div class="receipt" id="receipt" role="group" aria-label="Savings preview"></div></div>
+        </div>
+        </div>
+
+        <div class="check-suggest">
+        <p class="chip-label">Popular medications on Cost Plus:</p>
+        <div class="chips">
+          <button type="button" class="chip" data-drug="Metformin"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Metformin</button>
+          <button type="button" class="chip" data-drug="Atorvastatin"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Atorvastatin</button>
+          <button type="button" class="chip" data-drug="Lisinopril"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Lisinopril</button>
+          <button type="button" class="chip" data-drug="Omeprazole"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Omeprazole</button>
+          <button type="button" class="chip" data-drug="Sertraline"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Sertraline</button>
+          <button type="button" class="chip" data-drug="Amlodipine"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Amlodipine</button>
+          <button type="button" class="chip" data-drug="Metoprolol"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Metoprolol</button>
+          <button type="button" class="chip" data-drug="Levothyroxine"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Levothyroxine</button>
+          <button type="button" class="chip" data-drug="Montelukast"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Montelukast</button>
+          <button type="button" class="chip" data-drug="Losartan"><svg viewBox="0 0 24 24"><path d="M4.5 12.5l7-7a5 5 0 017 7l-7 7a5 5 0 01-7-7z"/></svg>Losartan</button>
+        </div>
+        </div>
+        </div>
+      </section>
+
+      <div class="fold" aria-hidden="true"><span>Page 03 of 04</span></div>
+
+      <section class="sec" id="sec-register">
+        <span class="sec-num" aria-hidden="true">03</span>
+        <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">03</span>Getting Started</p>
+        <h2 class="sec-title">How to register on Cost Plus Drugs</h2>
+        <p class="sec-sub">Setting up your Cost Plus Drugs account takes about 5 minutes.</p>
+
+        <ol class="flow">
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Go to costplusdrugs.com</h3><p>Open costplusdrugs.com in your browser. The site is available on desktop and mobile.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Create a free account</h3><p>Click &ldquo;Sign Up&rdquo; and enter your name, email address, date of birth, and shipping address. There is no membership fee — the account is completely free.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Search for your medication</h3><p>Use the search bar to find your drug by name. You can search by brand name or generic name. Select the correct dosage and quantity.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Complete your order</h3><p>Add to cart and checkout. You&rsquo;ll pay with a credit or debit card. Your prescription will be reviewed by a licensed pharmacist before shipping — no physical prescription card needed for most generics.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Receive your order</h3><p>Medications typically arrive in 4&ndash;7 business days. Keep your order confirmation email — you&rsquo;ll need it to submit your reimbursement request.</p></div></li>
+        </ol>
+
+        <div class="callout">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg>
+          <div><strong>Important: keep your receipts</strong><p>Save your Cost Plus order confirmation email after every purchase. You&rsquo;ll upload it when submitting your reimbursement. Without a receipt, we cannot process your claim.</p></div>
+        </div>
+
+        <a class="btn" href="https://costplusdrugs.com" target="_blank" rel="noopener">Go to costplusdrugs.com <svg viewBox="0 0 24 24" width="15" height="15" style="stroke:#fff;fill:none;stroke-width:2.4"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+      </section>
+
+      <div class="fold" aria-hidden="true"><span>Page 04 of 04</span></div>
+
+      <section class="sec sec--ledger" id="sec-submit">
+        <span class="sec-num" aria-hidden="true">04</span>
+        <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">04</span>Reimbursement</p>
+        <h2 class="sec-title">How to submit a receipt</h2>
+        <p class="sec-sub">The reimbursement process is simple — no paper forms, no mailing anything.</p>
+
+        <ol class="flow">
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Gather your Cost Plus receipt</h3><p>After your order arrives, locate your order confirmation email from Cost Plus Drugs. It shows your name, drug name, quantity, amount paid, and shipping cost.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Open the reimbursement form</h3><p>Click the Submit a Claim button below. You&rsquo;ll be taken to a secure online form administered by Maverick Administrators.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Fill in your information</h3><p>Enter your name, email address, employer name, and the details from your receipt: drug name, date of purchase, prescription amount, and shipping amount.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Upload your receipt</h3><p>Attach a photo or PDF of your Cost Plus order confirmation. A screenshot from your email is fine — just make sure the drug name, date, and total amount are clearly visible.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">05</div><div class="flow-body"><h3>Submit and wait for confirmation</h3><p>Once submitted, you&rsquo;ll receive an email confirmation within minutes. Claims are processed promptly and Maverick will notify you of the outcome.</p></div></li>
+        </ol>
+
+        <div class="elevcard checklist">
+          <h4>What to include in your submission</h4>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Your full name and email address</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Your employer&rsquo;s name</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Drug name and dosage</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Date of purchase</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Prescription amount (from Cost Plus receipt)</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Shipping amount (from Cost Plus receipt)</li>
+            <li><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Receipt file (PDF or photo — order confirmation email is fine)</li>
+          </ul>
+        </div>
+        <a class="ticket" href="https://su007.share-na2.hsforms.com/2JD5rjAvZQgywDqKeLq1GUQ" target="_blank" rel="noopener noreferrer"><span class="tk-stub" aria-hidden="true"><img src="maverick-logo.png" alt="" /></span><span class="tk-body">Submit a Claim <span class="arrow" aria-hidden="true">→</span></span></a>
+        <p style="font-size:13px;color:var(--faint);margin-top:10px;">You&rsquo;ll be taken to Maverick&rsquo;s secure claim submission form.</p>
+      </section>
+
+      </div><!-- /form-run -->
+      <div class="run-tear" aria-hidden="true"></div>
+
+      <div class="gap" aria-hidden="true"></div>
+
+      <section class="sec sec--dark sec--finale" id="sec-paid">
+        <span class="sec-num" aria-hidden="true">05</span>
+        <svg class="fin-rose rose" aria-hidden="true"><use href="#glc-rose"/></svg>
+        <p class="eyebrow"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span class="jix" aria-hidden="true">05</span>Getting Paid</p>
+        <h2 class="sec-title">How and when you receive your reimbursement</h2>
+        <p class="sec-sub">Claims are processed promptly. Payments are issued on a weekly basis. You will receive an email with your payment options: ACH direct deposit, physical check, or via the Tremendous platform (Venmo, PayPal, Cash App, or Prepaid Visa).</p>
+
+        <ol class="flow flow--compact">
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">01</div><div class="flow-body"><h3>Claim submitted</h3><p>Day 0 — you submit your receipt.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">02</div><div class="flow-body"><h3>Under review</h3><p>Payments are processed weekly. Members choose reimbursement via ACH, physical check, or the Tremendous platform &mdash; which issues instantaneous payments via Venmo, PayPal, Cash App, or Prepaid Visa.</p></div></li>
+          <li class="flow-step"><div class="flow-num" aria-hidden="true">03</div><div class="flow-body"><h3>Payment sent</h3><p>Payments are issued on a weekly basis.</p></div></li>
+          <li class="flow-step gold"><div class="flow-num" aria-hidden="true">04</div><div class="flow-body"><h3>Funds received</h3><p>Funds received based on your selected payment method.</p></div></li>
+        </ol>
+
+        <h3 class="h3-sub h3-sub--rule">Choose how you get paid</h3>
+        <p class="p-sub">You will receive an email with payment options after your claim is approved. You can choose ACH direct deposit, a physical check, or payment via the Tremendous platform &mdash; which supports instant payments via Venmo, PayPal, Cash App, or Prepaid Visa.</p>
+        <div class="pay-grid">
+          <div class="pay-card"><span class="pay-ic pm-venmo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M13.4 7.5l-3.6 5h4.4l-3.6 5"/></svg></span><div><h4>Venmo</h4><p>Instant transfer to your Venmo account</p></div></div>
+          <div class="pay-card"><span class="pay-ic pm-paypal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7H4a2 2 0 00-2 2v8a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2H6a2 2 0 00-2 2v2"/><circle cx="16.5" cy="13" r="1.1" fill="currentColor" stroke="none"/></svg></span><div><h4>PayPal</h4><p>Sent to your PayPal balance in minutes</p></div></div>
+          <div class="pay-card"><span class="pay-ic pm-cash"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="2.5" x2="12" y2="21.5"/><path d="M16.5 5.5H10a3.25 3.25 0 000 6.5h4a3.25 3.25 0 010 6.5H7"/></svg></span><div><h4>Cash App</h4><p>Direct to your Cash App account</p></div></div>
+          <div class="pay-card"><span class="pay-ic pm-ach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M12 3l9 7H3z"/><path d="M5 10v11"/><path d="M9.7 10v11"/><path d="M14.3 10v11"/><path d="M19 10v11"/></svg></span><div><h4>ACH Direct Deposit</h4><p>To your bank account in 2&ndash;4 days</p></div></div>
+          <div class="pay-card"><span class="pay-ic pm-check"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5.5" width="20" height="13" rx="1.5"/><path d="M5.5 9.5h6"/><path d="M5.5 12.5h4"/><path d="M14.5 15h4"/></svg></span><div><h4>Physical Check</h4><p>A paper check, mailed to you</p></div></div>
+          <div class="pay-card"><span class="pay-ic pm-visa"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="2"/><line x1="1.5" y1="10" x2="22.5" y2="10"/><line class="gold-detail" x1="5.5" y1="15" x2="9.5" y2="15"/></svg></span><div><h4>Prepaid Visa</h4><p>Digital prepaid card via email</p></div></div>
+        </div>
+
+        <h3 class="h3-sub h3-sub--rule" style="margin-bottom:16px;">Common questions</h3>
+        <div class="faq">
+          <div class="faq-item">
+            <button class="faq-q" type="button">What is Alkeme Rx Redirect?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">Alkeme Rx Redirect is a prescription savings program administered by Maverick Administrators. It allows you to purchase generic medications at CostPlusDrugs.com and receive full reimbursement through your employer&rsquo;s benefit plan, plus a Savings Reward.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">How does the Savings Reward work?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">After your reimbursement claim is approved, you&rsquo;ll receive an additional payment equal to 10% of your prescription cost &mdash; up to $50 per fill. This is called the Redirect Participation Reimbursement and is part of your employer&rsquo;s Medical Expense Reimbursement Plan (MERP). It is not taxable income.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">When will I receive my payment?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">Claims are processed promptly. Payments are issued on a weekly basis. You will receive an email with your payment options: ACH direct deposit, physical check, or via the Tremendous platform (Venmo, PayPal, Cash App, or Prepaid Visa).</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">What payment methods are available?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">You will receive an email with payment options after your claim is approved. You can choose ACH direct deposit, a physical check, or payment via the Tremendous platform &mdash; which supports instant payments via Venmo, PayPal, Cash App, or Prepaid Visa.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Is the Savings Reward taxable?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">No. Reimbursements under this program, including the Redirect Participation Reimbursement, are made through your employer&rsquo;s MERP plan document and are not considered taxable income under IRC &sect;105.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">What if my drug is not on CostPlusDrugs.com?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">Not all medications are available on Cost Plus Drugs. If your drug is not listed, continue using your existing pharmacy benefit. This program is supplemental &mdash; it does not replace your current coverage.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Who do I contact with questions?<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <div class="faq-a"><div class="faq-a-inner">Contact Maverick Administrators at <a href="mailto:RxRedirect@mavericktpa.com">RxRedirect@mavericktpa.com</a> or call (800) 341-9000.</div></div>
+          </div>
+        </div>
+
+        <div class="remit">
+          <h3>Ready to start saving?</h3>
+          <p>Check if your medication is available on Cost Plus, or jump straight to submitting your first claim.</p>
+          <a class="btn" href="#sec-check">Check your drug now <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+
+      <div class="contact-inline">Questions? Contact Maverick Administrators at <a href="mailto:RxRedirect@mavericktpa.com">RxRedirect@mavericktpa.com</a> or call (800) 341-9000.</div>
+
+    </div>
+  </main>
+</div>
+
+<footer class="site">
+  <svg class="foot-rose rose" aria-hidden="true"><use href="#glc-rose"/></svg>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand-plate"><img src="maverick-logo.png" alt="Maverick Administrators" /></span><span class="plate-powered">Powered by Maverick Administrators</span>
+        <p class="foot-desc">Your employer has enrolled you in <strong>Alkeme Rx Redirect</strong>, a prescription savings program administered by <strong>Maverick Administrators</strong>. Buy your generic medications at dramatically reduced prices on CostPlusDrugs.com, submit your receipt, and receive 100% reimbursement of your prescription cost and shipping. You&rsquo;ll also earn a Savings Reward (Redirect Participation Reimbursement) of 10% of your prescription cost, up to $50 per fill. Claims are processed promptly and payments are issued weekly via ACH, physical check, or Tremendous (Venmo, PayPal, Cash App, or Prepaid Visa).</p>
+      </div>
+      <div class="foot-contact">
+        <span class="foot-lbl">Questions about your benefit?</span>
+        <a class="foot-mail" href="mailto:RxRedirect@mavericktpa.com">RxRedirect@mavericktpa.com</a>
+        <span class="foot-hint">(800) 341-9000 &middot; <a href="https://www.mavericktpa.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">www.mavericktpa.com</a></span>
+        <span class="foot-hint">10606 Trademark Pkwy N, Suite 201A, Rancho Cucamonga, CA 91730</span>
+      </div>
+    </div>
+    <div class="foot-rule"></div>
+    <div class="foot-meta">
+      <span>&copy; <span id="yr">2026</span> Maverick Administrators. All rights reserved.</span>
+      <span class="foot-tag"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Alkeme Rx Redirect &middot; Member Portal</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Sidebar scroll-spy
+  (function(){
+    var items = Array.prototype.slice.call(document.querySelectorAll('.sb-item'));
+    var highlight = document.getElementById('sbHighlight');
+    var sections = items.map(function(it){ return document.getElementById(it.dataset.target); });
+
+    function positionHighlight(idx){
+      var el = items[idx];
+      if(!el) return;
+      highlight.style.transform = 'translateY(' + el.offsetTop + 'px)';
+      highlight.style.height = el.offsetHeight + 'px';
+    }
+    function setActive(idx){
+      items.forEach(function(it,i){ it.classList.toggle('active', i===idx); });
+      positionHighlight(idx);
+    }
+    setActive(0);
+
+    if('IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            var idx = sections.indexOf(entry.target);
+            if(idx > -1) setActive(idx);
+          }
+        });
+      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+      sections.forEach(function(s){ if(s) io.observe(s); });
+    }
+
+    items.forEach(function(it){
+      it.querySelector('a').addEventListener('click', function(e){
+        e.preventDefault();
+        var target = document.getElementById(it.dataset.target);
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+    window.addEventListener('resize', function(){
+      var activeIdx = items.findIndex(function(it){ return it.classList.contains('active'); });
+      positionHighlight(activeIdx > -1 ? activeIdx : 0);
+    });
+  })();
+
+  // Mobile wayfinder — restates the sidebar journey where the sidebar is hidden
+  (function(){
+    var wf = document.querySelector('.wayfinder');
+    if(!wf || !('IntersectionObserver' in window)) return;
+    var links = Array.prototype.slice.call(wf.querySelectorAll('a'));
+    var secs = links.map(function(l){ return document.getElementById(l.getAttribute('href').slice(1)); });
+    function setOn(idx){
+      links.forEach(function(l,j){ l.classList.toggle('on', j===idx); });
+      var el = links[idx];
+      if(el) wf.scrollLeft = el.offsetLeft - (wf.clientWidth - el.offsetWidth) / 2;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          var idx = secs.indexOf(en.target);
+          if(idx > -1) setOn(idx);
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+    secs.forEach(function(s){ if(s) io.observe(s); });
+  })();
+
+  // Draw-in for the reading threads: flow rails and perforated fold lines.
+  // Nothing fades — printed things are already there; only the lines draw.
+  (function(){
+    var els = document.querySelectorAll('.flow-step, .fold');
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window)){
+      els.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: .2 });
+    els.forEach(function(el){ io.observe(el); });
+  })();
+
+  // Step-flow spotlight — light the tile of the step currently being read
+  (function(){
+    var steps = document.querySelectorAll('.flow-step');
+    if(!steps.length || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ en.target.classList.toggle('now', en.isIntersecting); });
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+    steps.forEach(function(s){ io.observe(s); });
+  })();
+
+  // Drug chip -> search field
+  document.querySelectorAll('.chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.getElementById('drugSearch').value = chip.dataset.drug;
+      document.getElementById('drugSearch').focus();
+    });
+  });
+
+  // FAQ accordion — measured heights (no clipping), aria-expanded
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.setAttribute('aria-expanded','false');
+    btn.addEventListener('click', function(){
+      var item = btn.closest('.faq-item');
+      var ans = item.querySelector('.faq-a');
+      var wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(o){
+        o.classList.remove('open');
+        o.querySelector('.faq-a').style.maxHeight = '0px';
+        o.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      });
+      if(!wasOpen){
+        item.classList.add('open');
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+
+  // Claim ticket — tear feedback on pull (the form itself opens in a new tab)
+  (function(){
+    var t = document.querySelector('.ticket');
+    if(!t) return;
+    t.addEventListener('click', function(){
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      t.classList.remove('tearing'); void t.offsetWidth;
+      t.classList.add('tearing');
+    });
+    t.addEventListener('animationend', function(){ t.classList.remove('tearing'); });
+  })();
+
+  // Savings receipt — prints the reward FORMULA, never asserted drug prices.
+  // The only dollar amounts shown are ones the member types in themselves.
+  (function(){
+    var wrap = document.getElementById('receiptWrap');
+    var paper = document.getElementById('receipt');
+    var search = document.getElementById('drugSearch');
+    var goBtn = document.querySelector('.search-row button');
+    if(!wrap || !paper || !search) return;
+
+    // Real catalog (data/drug-prices.json, refreshed weekly by CI). Until it
+    // loads — or if it fails — the receipt falls back to formula-only.
+    var meds = null, generatedAt = null;
+    // Flat per-fill shipping estimate — confirmed by Aaron (Aug 2026). Most
+    // fills ship for $5.25; a few (e.g. refrigerated meds) cost more, hence
+    // the disclaimer next to every shipping line in the receipt.
+    var SHIPPING_ESTIMATE = 5.25;
+    fetch('data/drug-prices.json')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){ if(d && d.medications){ meds = d.medications; generatedAt = d.generated_at; } })
+      .catch(function(){});
+
+    function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function fmtDate(iso){
+      var d = new Date(iso);
+      return isNaN(d) ? '' : d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    // Whole-word match only: "Omeprazole" must not surface Esomeprazole.
+    function findMatches(q){
+      if(!meds) return null;
+      var re = new RegExp('\\b' + escapeRegex(q), 'i');
+      return meds.filter(function(m){ return re.test(m.name || '') || re.test(m.brand_name || ''); });
+    }
+
+    function money(n){ return '$' + n.toFixed(2); }
+    // Truncates (never rounds) to whole cents. toFixed(2) on a raw float
+    // rounds the third decimal up (e.g. 6.427 -> "6.43"), which would
+    // overpay the reward. A naive Math.floor(n*100)/100 is unsafe too:
+    // binary float noise can turn an exact value like 42.30*0.10 (4.23)
+    // into 4.2299999999999995, which floor() would wrongly chop to 4.22.
+    // So we round to a tenth of a cent first (kills the float noise),
+    // then floor.
+    function truncateCents(n){ return Math.floor(Math.round(n * 1000) / 10) / 100; }
+    function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function line(label, val, cls, role){
+      return '<div class="r-line ' + (cls || '') + '"><span>' + label + '</span><span class="val"' + (role ? ' data-role="' + role + '"' : '') + '>' + val + '</span></div>';
+    }
+
+    function print(name){
+      var q = name.trim();
+      if(!q){ search.focus(); return; }
+      var matches = findMatches(q);
+      var best = null;
+      (matches || []).forEach(function(m){
+        if(typeof m.our_price === 'number' && (!best || m.our_price < best.our_price)) best = m;
+      });
+
+      // Every real strength of the matched drug (rows sharing its catalog
+      // `name`), cheapest row per strength. The data holds one price per
+      // strength — Cost Plus's own default fill — and prices do NOT scale
+      // linearly with quantity, so never extrapolate other counts from it.
+      var variants = [];
+      if(best){
+        var byStrength = {};
+        matches.forEach(function(m){
+          if(m.name !== best.name || typeof m.our_price !== 'number') return;
+          var key = m.strength || m.slug;
+          if(!byStrength[key] || m.our_price < byStrength[key].our_price) byStrength[key] = m;
+        });
+        variants = Object.keys(byStrength).map(function(k){ return byStrength[k]; });
+        variants.sort(function(a, b){ return (parseFloat(a.strength) || 0) - (parseFloat(b.strength) || 0); });
+      }
+
+      render(best, true);
+
+      function render(sel, animate){
+        var html = '<div class="r-head"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Maverick benefit &middot; how it pays</div>';
+        html += '<div class="r-drug">' + esc(q) + '</div>';
+        if(sel){
+          var when = fmtDate(generatedAt);
+          html += '<p class="r-real"><strong>' + money(sel.our_price) + '</strong> &mdash; ' + esc(sel.name + (sel.strength ? ' ' + sel.strength : ''));
+          html += when ? (', as of ' + esc(when)) : '';
+          html += ' &middot; <a href="' + esc(sel.url) + '" target="_blank" rel="noopener">confirm this price</a>';
+          html += '<span class="r-variants">Priced for Cost Plus&rsquo;s standard ' + (sel.default_quantity > 1 ? sel.default_quantity + '-count ' : '') + 'fill. Other quantities are priced individually at checkout on costplusdrugs.com.</span>';
+          html += '</p>';
+          if(variants.length > 1){
+            html += '<div class="r-strengths" role="group" aria-label="Available strengths">';
+            variants.forEach(function(v, i){
+              html += '<button type="button" class="chip' + (v === sel ? ' sel' : '') + '" aria-pressed="' + (v === sel) + '" data-i="' + i + '">' + esc(v.strength || v.package_size || 'option') + '</button>';
+            });
+            html += '</div>';
+          }
+        } else if(matches){
+          html += '<p class="r-real">We couldn&rsquo;t find an exact match in this week&rsquo;s catalog &mdash; check <a href="https://costplusdrugs.com" target="_blank" rel="noopener">costplusdrugs.com</a> directly; any medication available there is eligible for reimbursement.</p>';
+        }
+        html += '<span class="r-tag">Your reimbursement formula</span>';
+        html += line('You pay at checkout', 'Cost Plus price', '', 'pay');
+        html += line('Shipping (est.)', money(SHIPPING_ESTIMATE), '', 'ship');
+        html += '<p class="r-hint">Shipping costs may vary for certain medications. Please verify shipping costs on the Cost Plus website.</p>';
+        html += line('Maverick reimburses', '100% of both', 'accent', 'back');
+        html += line('Savings reward', '+10% of savings &middot; up to $50', 'gold', 'reward');
+        html += '<div class="r-rule"></div>';
+        html += line('Your net cost', '$0.00', 'net');
+        html += line('Paid to you', 'your payment + shipping + reward', 'gold', 'paid');
+        html += '<div class="r-try">';
+        html += '<label for="tryPay">Try it &mdash; you pay at Cost Plus:</label>';
+        html += '<div class="r-try-field"><span class="cur" aria-hidden="true">$</span><input id="tryPay" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"></div>';
+        html += '<label for="tryRetail">Retail price elsewhere:</label>';
+        html += '<div class="r-try-field"><span class="cur" aria-hidden="true">$</span><input id="tryRetail" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"></div>';
+        html += '<p class="r-hint">Check GoodRx or a recent pharmacy receipt if you&rsquo;re not sure.</p>';
+        html += '<p class="r-cap" data-role="cap">Reward capped at $50 per fill.</p>';
+        html += '</div>';
+        html += '<div><span class="r-stamp"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg> Covered by your employer</span></div>';
+        html += '<a class="r-cta" href="https://costplusdrugs.com" target="_blank" rel="noopener">Check the real price for ' + esc(q) + ' on costplusdrugs.com <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>';
+        html += '<p class="r-foot">Prices change &mdash; always confirm the current price on costplusdrugs.com before ordering.</p>';
+
+        paper.innerHTML = html;
+        if(animate){
+          wrap.classList.remove('printed');
+          void wrap.offsetHeight; // restart the print animation
+          wrap.classList.add('printed');
+        }
+
+        // live formula: the member's own two numbers in, reimbursement math
+        // out. Reward = 10% of what they SAVED vs retail (capped at $50) —
+        // it needs both numbers, so with either one missing we show the
+        // generic placeholders instead of guessing.
+        var payIn = paper.querySelector('#tryPay');
+        var retailIn = paper.querySelector('#tryRetail');
+        var pay = paper.querySelector('[data-role="pay"]');
+        var back = paper.querySelector('[data-role="back"]');
+        var reward = paper.querySelector('[data-role="reward"]');
+        var paid = paper.querySelector('[data-role="paid"]');
+        var cap = paper.querySelector('[data-role="cap"]');
+        function num(el){
+          var v = parseFloat(el.value.replace(/[^0-9.]/g, ''));
+          return (isFinite(v) && v > 0) ? v : null;
+        }
+        function recalc(){
+          var p = num(payIn), r = num(retailIn);
+          if(p !== null){
+            pay.textContent = money(p);
+            back.textContent = '−' + money(p + SHIPPING_ESTIMATE);
+          } else {
+            pay.textContent = 'Cost Plus price';
+            back.textContent = '100% of both';
+          }
+          if(p !== null && r !== null){
+            var rew = truncateCents(Math.min(Math.max(r - p, 0) * .10, 50));
+            reward.textContent = '+' + money(rew);
+            // full reimbursement: what they paid at Cost Plus + shipping + the reward
+            paid.textContent = '+' + money(p + SHIPPING_ESTIMATE + rew);
+            cap.classList.toggle('show', (r - p) * .10 > 50);
+          } else {
+            reward.textContent = '+10% of savings · up to $50';
+            paid.textContent = 'your payment + shipping + reward';
+            cap.classList.remove('show');
+          }
+        }
+        payIn.addEventListener('input', recalc);
+        retailIn.addEventListener('input', recalc);
+
+        paper.querySelectorAll('.r-strengths .chip').forEach(function(b){
+          b.addEventListener('click', function(){ render(variants[+b.dataset.i], false); });
+        });
+
+        // Prefill both fields with this strength's real numbers (still editable).
+        if(sel){
+          payIn.value = sel.our_price.toFixed(2);
+          if(typeof sel.retail_price_other_pharmacies === 'number'){
+            retailIn.value = sel.retail_price_other_pharmacies.toFixed(2);
+          }
+          payIn.dispatchEvent(new Event('input'));
+        }
+      }
+    }
+
+    goBtn.addEventListener('click', function(){ print(search.value); });
+    search.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); print(search.value); } });
+    document.querySelectorAll('.chip').forEach(function(chip){
+      chip.addEventListener('click', function(){ print(chip.dataset.drug); });
+    });
+  })();
+
+  // Scroll progress (tenant accent → gold)
+  (function(){
+    var bar = document.getElementById('progress');
+    if(!bar) return;
+    var ticking = false;
+    function update(){
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(h.scrollTop / max, 1) : 0) + ')';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!ticking){ requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  })();
+
+  // Arrival veil — continues the triangle wipe from the landing page
+  (function(){
+    try{
+      if(sessionStorage.getItem('mvkArrive') !== '1') return;
+      sessionStorage.removeItem('mvkArrive');
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+      var veil = document.createElement('div');
+      veil.setAttribute('aria-hidden','true');
+      veil.style.cssText = 'position:fixed;inset:0;z-index:300;pointer-events:none;opacity:1;transition:opacity 520ms ease 60ms;background:linear-gradient(165deg,' + accent + '59 0%, #0B1322 55%);';
+      document.body.appendChild(veil);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ veil.style.opacity = '0'; }); });
+      setTimeout(function(){ veil.remove(); }, 700);
+    }catch(e){}
+  })();
+
+  // Empty-search feedback — the counter window nudges instead of staying
+  // silent. Additive: print()'s own empty-guard still runs untouched.
+  (function(){
+    var row = document.querySelector('.search-row');
+    var input = document.getElementById('drugSearch');
+    var btn = document.querySelector('.search-row button');
+    if(!row || !input) return;
+    function nudge(){
+      if(input.value.trim()) return;
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      row.classList.remove('nudge'); void row.offsetWidth;
+      row.classList.add('nudge');
+    }
+    input.addEventListener('keydown', function(e){ if(e.key === 'Enter') nudge(); });
+    if(btn) btn.addEventListener('click', nudge);
+    row.addEventListener('animationend', function(){ row.classList.remove('nudge'); });
+  })();
+
+  // Re-print feedback — a strength switch reads as a fresh print pass, not a
+  // DOM swap. Runs after the (untouched) render via event bubbling; purely
+  // visual (opacity), so the receipt's content and attributes never wait.
+  (function(){
+    var paper = document.getElementById('receipt');
+    if(!paper) return;
+    paper.addEventListener('click', function(e){
+      if(!e.target.closest || !e.target.closest('.r-strengths .chip')) return;
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      paper.classList.remove('reprint'); void paper.offsetWidth;
+      paper.classList.add('reprint');
+    });
+    paper.addEventListener('animationend', function(e){
+      if(e.animationName === 'reprint-settle') paper.classList.remove('reprint');
+    });
+  })();
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

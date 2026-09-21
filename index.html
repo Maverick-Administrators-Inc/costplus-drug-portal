@@ -363,12 +363,13 @@
             <div class="sugg">
               <button type="button" data-slug="alkeme">Alkeme</button>
               <button type="button" data-slug="acme-corporation">Acme Corporation</button>
+              <button type="button" data-slug="verita-global">Verita Global</button>
             </div>
           </div>
 
           <div class="field">
             <svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/></svg>
-            <input id="lookup" type="text" placeholder="e.g. Alkeme, Acme Corporation…" autocomplete="off" />
+            <input id="lookup" type="text" placeholder="e.g. Alkeme, Acme Corporation, Verita Global…" autocomplete="off" />
             <kbd class="enter-hint" aria-hidden="true">&#9166;</kbd>
           </div>
           <button class="cta" id="ctaBtn" type="button"><span>Access my benefits</span><span class="arrow" aria-hidden="true">→</span></button>
@@ -442,7 +443,9 @@
   var COMPANIES = {
     "alkeme": { name: "Alkeme", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
     "acme corporation": { name: "Acme Corporation", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
-    "acme": { name: "Acme Corporation", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" }
+    "acme": { name: "Acme Corporation", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
+    "verita global": { name: "Verita Global", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
+    "verita": { name: "Verita Global", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" }
   };
   var input = document.getElementById('lookup');
   var cta = document.getElementById('ctaBtn');

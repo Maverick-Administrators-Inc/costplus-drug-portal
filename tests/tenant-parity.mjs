@@ -1,65 +1,81 @@
-// Tenant parity: alkeme.html and acme-corporation.html must be structurally
-// identical, differing ONLY in the four tenant-specific lines — the <title>,
-// the --accent* CSS variables, the topbar crumb, and the welcome headline.
-// Each differing line must reduce to its alkeme counterpart under the tenant
-// swap, and neither file may contain stray traces of the other tenant.
+// Tenant parity: every tenant portal must be structurally identical to the
+// alkeme.html reference, differing ONLY in the three tenant-specific lines —
+// the <title>, the topbar crumb, and the welcome headline. Each differing line
+// must reduce to its alkeme counterpart under the tenant swap, and no tenant
+// file may contain another tenant's name (the shared "Alkeme Rx Redirect"
+// program brand is not a tenant name).
 import { readFile } from 'node:fs/promises';
 
-const A_PATH = new URL('../alkeme.html', import.meta.url);
-const B_PATH = new URL('../acme-corporation.html', import.meta.url);
+const REFERENCE = 'alkeme.html';
 
-// acme -> alkeme normalization; applying these to an acme line must reproduce
-// the alkeme line exactly.
-const SWAPS = [
-  ['Acme Corporation', 'Alkeme'],
-  ['#6E5BD1', '#487DA9'],
-  ['#4A3B99', '#2E5A83'],
-  ['rgba(110,91,209', 'rgba(72,125,169'],
-];
+// slug -> display name. Add a row here when a new employer portal is added,
+// and keep index.html's COMPANIES map in sync.
+const TENANTS = {
+  'alkeme.html': 'Alkeme',
+  'acme-corporation.html': 'Acme Corporation',
+  'verita-global.html': 'Verita Global',
+};
 
 let fail = 0;
 const bad = (msg) => { fail++; console.log(`  FAIL ${msg}`); };
 const ok = (msg) => console.log(`  ok  ${msg}`);
 
-const a = (await readFile(A_PATH, 'utf8')).split('\n');
-const b = (await readFile(B_PATH, 'utf8')).split('\n');
-
-console.log('\n[parity] alkeme.html vs acme-corporation.html');
-if (a.length !== b.length) bad(`line counts differ: ${a.length} vs ${b.length}`);
-else ok(`same line count (${a.length})`);
-
-const diffs = [];
-for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) diffs.push(i);
-
-if (diffs.length !== 4) bad(`expected exactly 4 differing lines, found ${diffs.length}${diffs.length ? ' (lines ' + diffs.map(i => i + 1).join(', ') + ')' : ''}`);
-else ok(`exactly 4 differing lines (${diffs.map(i => i + 1).join(', ')})`);
+const refName = TENANTS[REFERENCE];
+const refText = await readFile(new URL(`../${REFERENCE}`, import.meta.url), 'utf8');
+const ref = refText.split('\n');
 
 const label = (line) =>
   line.includes('<title>') ? 'title' :
-  line.includes('--accent:') ? 'accent vars' :
   line.includes('class="co"') ? 'topbar crumb' :
   line.includes('class="tname"') ? 'welcome name' : 'UNEXPECTED';
 
-const seen = new Set();
-for (const i of diffs) {
-  const what = label(a[i] ?? '');
-  let norm = b[i] ?? '';
-  for (const [from, to] of SWAPS) norm = norm.split(from).join(to);
-  if (what === 'UNEXPECTED') bad(`line ${i + 1} differs but is not a tenant line: ${JSON.stringify((a[i] ?? '').trim().slice(0, 80))}`);
-  else if (seen.has(what)) bad(`two differing lines both look like the ${what} line`);
-  else if (norm !== a[i]) bad(`line ${i + 1} (${what}) differs beyond the tenant swap`);
-  else { seen.add(what); ok(`line ${i + 1}: ${what} — differs only by tenant swap`); }
-}
-if (diffs.length === 4) {
-  for (const want of ['title', 'accent vars', 'topbar crumb', 'welcome name'])
-    if (!seen.has(want)) bad(`missing expected tenant line: ${want}`);
-}
+// strip the shared program brand before hunting for stray tenant names
+const withoutBrand = (text) => text.split('Alkeme Rx Redirect').join('');
 
-const aText = a.join('\n'), bText = b.join('\n');
-if (bText.includes('Alkeme')) bad('acme-corporation.html contains a stray "Alkeme"'); else ok('no stray "Alkeme" in acme-corporation.html');
-if (aText.includes('Acme')) bad('alkeme.html contains a stray "Acme"'); else ok('no stray "Acme" in alkeme.html');
-if (bText.includes('487DA9') || bText.includes('2E5A83')) bad('acme-corporation.html contains an alkeme accent hex'); else ok('no alkeme accent hex in acme-corporation.html');
-if (aText.includes('6E5BD1') || aText.includes('4A3B99')) bad('alkeme.html contains an acme accent hex'); else ok('no acme accent hex in alkeme.html');
+for (const [file, name] of Object.entries(TENANTS)) {
+  if (file === REFERENCE) continue;
+  console.log(`\n[parity] ${REFERENCE} vs ${file}`);
+
+  const text = await readFile(new URL(`../${file}`, import.meta.url), 'utf8');
+  const lines = text.split('\n');
+
+  if (ref.length !== lines.length) bad(`line counts differ: ${ref.length} vs ${lines.length}`);
+  else ok(`same line count (${ref.length})`);
+
+  const diffs = [];
+  for (let i = 0; i < Math.min(ref.length, lines.length); i++) if (ref[i] !== lines[i]) diffs.push(i);
+
+  if (diffs.length !== 3) bad(`expected exactly 3 differing lines, found ${diffs.length}${diffs.length ? ' (lines ' + diffs.map(i => i + 1).join(', ') + ')' : ''}`);
+  else ok(`exactly 3 differing lines (${diffs.map(i => i + 1).join(', ')})`);
+
+  const seen = new Set();
+  for (const i of diffs) {
+    const what = label(ref[i] ?? '');
+    // the tenant swap: this tenant's name back to the reference tenant's name
+    const norm = (lines[i] ?? '').split(name).join(refName);
+    if (what === 'UNEXPECTED') bad(`line ${i + 1} differs but is not a tenant line: ${JSON.stringify((ref[i] ?? '').trim().slice(0, 80))}`);
+    else if (seen.has(what)) bad(`two differing lines both look like the ${what} line`);
+    else if (what === 'title') { seen.add(what); ok(`line ${i + 1}: title — tenant-specific`); }
+    else if (norm !== ref[i]) bad(`line ${i + 1} (${what}) differs beyond the tenant swap`);
+    else { seen.add(what); ok(`line ${i + 1}: ${what} — differs only by tenant swap`); }
+  }
+  if (diffs.length === 3) {
+    for (const want of ['title', 'topbar crumb', 'welcome name'])
+      if (!seen.has(want)) bad(`missing expected tenant line: ${want}`);
+  }
+
+  if (!lines[diffs.find((i) => label(ref[i] ?? '') === 'title') ?? -1]?.includes(name))
+    bad(`${file} title does not name ${name}`);
+  else ok(`title names ${name}`);
+
+  // no file may mention a tenant other than its own
+  const body = withoutBrand(text);
+  for (const other of Object.values(TENANTS)) {
+    if (other === name) continue;
+    if (body.includes(other)) bad(`${file} contains a stray "${other}"`);
+    else ok(`no stray "${other}" in ${file}`);
+  }
+}
 
 console.log(`\nparity: ${fail ? fail + ' failure(s)' : 'pass'}`);
 process.exit(fail ? 1 : 0);
