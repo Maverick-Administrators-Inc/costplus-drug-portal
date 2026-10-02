@@ -424,11 +424,12 @@
     "verita-global": ["Verita Global", "Verita"]
   };
   // trailing corporate suffixes a member may add or leave off ("Inc.", "LLC"…)
-  var SUFFIXES = ["inc", "llc", "corp", "corporation", "co", "company", "ltd", "group"];
+  var SUFFIXES = ["inc", "incorporated", "llc", "llp", "lp", "pllc", "plc", "corp", "corporation", "co", "company", "ltd", "limited", "group"];
 
   // The comparison key: case, accents, punctuation and spacing are ignored, and
-  // so are trailing corporate suffixes. Keys are only ever compared for
-  // equality, so a partial or near-miss guess opens nothing.
+  // so are trailing corporate suffixes typed as separate words (a glued-on
+  // "…Inc" is kept). Keys are only ever compared for equality, so a partial or
+  // near-miss guess opens nothing.
   function normalize(s){
     var words = s.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase()
       .replace(/[.'’]/g, '')                // "L.L.C." -> "llc", "Macy's" -> "macys"
@@ -490,7 +491,12 @@
 
   // Shared computers: Back can restore this page from the browser's cache, so
   // clear what was typed on the way out and stand the stub back up on return.
-  window.addEventListener('pagehide', function(){ input.value = ''; clearNoMatch(); });
+  // Switching the field's type and back drops its undo history too, or
+  // Cmd+Z / Cmd+Shift+Z would bring back what the last person typed.
+  window.addEventListener('pagehide', function(){
+    input.value = ''; input.type = 'hidden'; input.type = 'text';
+    clearNoMatch();
+  });
   window.addEventListener('pageshow', function(e){
     if(e.persisted){ stub.classList.remove('torn'); wipe.classList.remove('active'); }
   });

@@ -20,8 +20,9 @@ works opened directly via `file://`.
    full name, and any approved aliases. That is the only place the name goes
    on the landing page — never in the placeholder, the copy, or a suggestion
    list: visitors must not be able to tell which employers take part. Members
-   match on a full name or alias (case, punctuation, spacing and suffixes like
-   Inc or LLC are ignored); partial names never open a portal.
+   match on a full name or alias (case, punctuation and spacing are ignored, as
+   is a trailing suffix like Inc or LLC typed as its own word); partial names
+   never open a portal.
 3. Register the file in `TENANTS` in `tests/tenant-parity.mjs` and in the
    default page list in `tests/receipt-check.mjs`, then run `npm test`.
 - `data/drug-prices.json` — weekly price catalog, refreshed by
@@ -38,9 +39,14 @@ tenant's name appearing in the file).
 
 **Employer lookup** — no employer name appears in the landing page's text,
 placeholder, attributes or meta tags; typing changes nothing on the page;
-every miss shows the same neutral message; and only a full name or alias
-(any case, spacing, punctuation or corporate suffix) opens a portal. Names are
-read from the `COMPANIES` registry, so a new employer is covered automatically.
+every miss shows the same neutral message; only a full name or alias (any
+case, spacing, punctuation or corporate suffix) opens a portal; and leaving
+the page clears the field and its undo history (checked with a real
+back/forward-cache restore). Names are read from the `COMPANIES` registry, so
+a new employer is covered automatically.
+One exception is outside the lookup's control: the program brand "Alkeme Rx
+Redirect", which the page must display, shares its first word with one
+employer, so the check sets the brand aside and can't vouch for that name.
 
 **Lookup / receipt end-to-end** — 29 assertions per portal file, run in
 headless Chromium against both a local HTTP server and `file://`:
