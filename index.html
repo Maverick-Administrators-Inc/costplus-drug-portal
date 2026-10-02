@@ -141,18 +141,13 @@
   .field{position:relative;margin-bottom:14px;}
   .field svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--faint);fill:none;stroke-width:2;pointer-events:none;transition:stroke var(--dur-med) ease;}
   .field:focus-within svg{stroke:var(--accent-deep);}
-  #lookup{width:100%;height:56px;background:#fff;border:1.5px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--font-ui);font-size:16px;padding:0 52px 0 46px;outline:none;caret-color:var(--accent);transition:border-color var(--dur-med) ease, box-shadow var(--dur-med) ease;}
+  #lookup{width:100%;height:56px;background:#fff;border:1.5px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--font-ui);font-size:16px;padding:0 16px 0 46px;outline:none;caret-color:var(--accent);transition:border-color var(--dur-med) ease, box-shadow var(--dur-med) ease;}
   #lookup::placeholder{color:#7c88a0;}
   @media (hover:hover){ #lookup:hover:not(:focus){border-color:color-mix(in srgb, var(--accent) 45%, var(--line));} }
   #lookup:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,71,94,.16);}
-  #lookup.matched{border-color:var(--accent-live, var(--accent));box-shadow:0 0 0 4px color-mix(in srgb, var(--accent-live, var(--accent)) 18%, transparent);}
-  /* return-key hint surfaces once the member has typed (pure CSS via :placeholder-shown) */
-  .enter-hint{position:absolute;right:14px;top:50%;transform:translateY(-50%) translateX(4px);font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--muted);background:#F1F3F8;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:3px 8px;pointer-events:none;opacity:0;transition:opacity var(--dur-med) ease, transform var(--dur-med) var(--ease-out), color var(--dur-med) ease, border-color var(--dur-med) ease;}
-  .field:has(#lookup:not(:placeholder-shown)) .enter-hint{opacity:1;transform:translateY(-50%) translateX(0);}
-  .field:has(#lookup.matched) .enter-hint{color:var(--text);border-color:#B9C4D6;background:#fff;}
 
-  /* ink CTA on paper — the tenant accent takes over on a match */
-  .cta{width:100%;height:56px;border:0;border-radius:8px;font-family:var(--font-ui);font-size:15.5px;font-weight:700;color:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(165deg,var(--ink-3) 0%, var(--ink) 100%);box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 18px rgba(10,19,34,.30);transition:filter var(--dur-med) ease, box-shadow var(--dur-med) ease, transform var(--dur-fast) ease, background var(--dur-med) ease;}
+  /* ink CTA on paper */
+  .cta{width:100%;height:56px;border:0;border-radius:8px;font-family:var(--font-ui);font-size:15.5px;font-weight:700;color:var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(165deg,var(--ink-3) 0%, var(--ink) 100%);box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 18px rgba(10,19,34,.30);transition:filter var(--dur-med) ease, box-shadow var(--dur-med) ease, transform var(--dur-fast) ease;}
   @media (hover:hover){
     .cta:hover{filter:brightness(1.3);box-shadow:0 1px 0 rgba(255,255,255,.1) inset,0 10px 26px rgba(10,19,34,.4);transform:translateY(-1px);}
     .cta:hover .arrow{transform:translateX(3px);}
@@ -160,35 +155,24 @@
   .cta:focus-visible{filter:brightness(1.3);box-shadow:0 1px 0 rgba(255,255,255,.1) inset,0 10px 26px rgba(10,19,34,.4);transform:translateY(-1px);}
   /* the stamp: a press sets the button down into the paper */
   .cta:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 3px 10px rgba(10,19,34,.28);}
-  /* deep-weighted gradient keeps the white label ≥4.5:1 across the button */
-  .cta.matched{color:#fff;background:linear-gradient(165deg,var(--m-light,var(--accent)) -25%, var(--m-deep,var(--accent-deep)) 65%);box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 8px 24px var(--m-glow,rgba(37,71,94,.35));}
   .cta .arrow{transition:transform var(--dur-fast) ease;}
 
   .helper{text-align:center;font-size:13.5px;color:var(--muted);margin-top:16px;}
   .helper a{color:var(--accent-deep);text-decoration:underline;text-underline-offset:2px;}
 
-  .badge-pop{display:none;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);background:color-mix(in srgb, var(--tri-color, var(--accent)) 8%, #fff);border:1px solid color-mix(in srgb, var(--tri-color, var(--accent)) 40%, transparent);border-radius:999px;padding:6px 14px;margin-bottom:14px;width:fit-content;}
-  .badge-pop .mark{width:10px;height:8.5px;color:var(--tri-color, var(--accent));flex-shrink:0;}
-  .badge-pop.show{display:inline-flex;}
+  /* not-found notice: the same static message for every miss, injected on
+     submit. Empty, it has no box but stays in the accessibility tree, so the
+     alert is announced when the message lands */
+  .no-match{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .no-match:not(:empty){background:#F4F6FA;border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px;}
   @media (prefers-reduced-motion:no-preference){
-    .badge-pop.show{animation:pop 320ms var(--ease-spring);}
+    .no-match:not(:empty){animation:pop 260ms var(--ease-out), nudge 420ms ease 220ms;}
     @keyframes pop{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
-  }
-
-  .no-match{display:none;background:#F4F6FA;border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px;font-size:13.5px;color:var(--muted);line-height:1.6;}
-  .no-match.show{display:block;}
-  @media (prefers-reduced-motion:no-preference){
-    .no-match.show{animation:pop 260ms var(--ease-out), nudge 420ms ease 220ms;}
     @keyframes nudge{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}55%{transform:translateX(3px);}80%{transform:translateX(-1px);}}
     /* an empty submission nudges the field — never silent */
     .field.nudge{animation:nudge 420ms ease;}
   }
   .no-match strong{color:var(--text);}
-  .no-match .sugg{display:inline-flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-  .no-match button{background:color-mix(in srgb, var(--accent) 8%, #fff);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);color:var(--accent-deep);font-size:13px;font-weight:600;border-radius:999px;padding:6px 14px;cursor:pointer;font-family:var(--font-ui);transition:background-color var(--dur-fast) ease, transform var(--dur-fast) ease;}
-  @media (hover:hover){ .no-match button:hover{background:color-mix(in srgb, var(--accent) 15%, #fff);transform:translateY(-1px);} }
-  .no-match button:active{transform:translateY(1px);}
-  @media (pointer:coarse){ .no-match button{padding:9px 16px;} }
 
   /* ===== Benefit belt — the money figures at display scale, then the
      three-step ticket manifest the stub tore from ===== */
@@ -302,7 +286,6 @@
     .card{padding:22px 20px 22px 48px;}
     .card::before{width:22px;}
     .card{mask-image:radial-gradient(circle at 22px 0, transparent 6px, #000 7px),radial-gradient(circle at 22px 100%, transparent 6px, #000 7px);-webkit-mask-image:radial-gradient(circle at 22px 0, transparent 6px, #000 7px),radial-gradient(circle at 22px 100%, transparent 6px, #000 7px);}
-    .enter-hint{display:none;}
     /* the engraving scales down, it never disappears — cropped into the
        corner at reduced weight so the headline stays clean */
     .hero-rose{right:-130px;top:-150px;width:340px;height:340px;color:rgba(244,189,80,.11);stroke-width:.7;}
@@ -357,20 +340,12 @@
           <h2><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Access your member portal</h2>
           <p class="sub">Enter your employer&rsquo;s name to get started</p>
 
-          <div class="badge-pop" id="matchBadge" role="status"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg><span id="matchLabel"></span></div>
-          <div class="no-match" id="noMatch" role="status">
-            We couldn&rsquo;t find &ldquo;<strong id="noMatchTerm"></strong>.&rdquo; Try one of these:
-            <div class="sugg">
-              <button type="button" data-slug="alkeme">Alkeme</button>
-              <button type="button" data-slug="acme-corporation">Acme Corporation</button>
-              <button type="button" data-slug="verita-global">Verita Global</button>
-            </div>
-          </div>
+          <div class="no-match" id="noMatch" role="alert"></div>
+          <template id="noMatchMsg"><strong>We couldn&rsquo;t find that employer.</strong> Please check the spelling and enter your company&rsquo;s full name as it appears on your pay stub or benefits materials. Still having trouble? Your HR department can confirm it for you.</template>
 
           <div class="field">
             <svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/></svg>
-            <input id="lookup" type="text" placeholder="e.g. Alkeme, Acme Corporation, Verita Global…" autocomplete="off" />
-            <kbd class="enter-hint" aria-hidden="true">&#9166;</kbd>
+            <input id="lookup" type="text" placeholder="Employer name" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-describedby="noMatch" />
           </div>
           <button class="cta" id="ctaBtn" type="button"><span>Access my benefits</span><span class="arrow" aria-hidden="true">→</span></button>
           <p class="helper">Not sure of your employer name? Contact your <a href="mailto:RxRedirect@mavericktpa.com">HR department</a>.</p>
@@ -440,69 +415,60 @@
 </div>
 
 <script>
+  // Employer registry: portal slug -> the employer's full name plus any approved
+  // aliases. A member reaches a portal only by typing one of these in full;
+  // nothing here is ever displayed, suggested or announced.
   var COMPANIES = {
-    "alkeme": { name: "Alkeme", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
-    "acme corporation": { name: "Acme Corporation", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
-    "acme": { name: "Acme Corporation", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
-    "verita global": { name: "Verita Global", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" },
-    "verita": { name: "Verita Global", accent: "#25475e", accentDeep: "#1A3444", glow: "rgba(37,71,94,.4)" }
+    "alkeme": ["Alkeme"],
+    "acme-corporation": ["Acme Corporation", "Acme"],
+    "verita-global": ["Verita Global", "Verita"]
   };
-  var input = document.getElementById('lookup');
-  var cta = document.getElementById('ctaBtn');
-  var badge = document.getElementById('matchBadge');
-  var matchLabel = document.getElementById('matchLabel');
-  var noMatch = document.getElementById('noMatch');
-  var noMatchTerm = document.getElementById('noMatchTerm');
-  var wipe = document.getElementById('wipe');
-  var stub = document.querySelector('.card');
-  var current = null;
+  // trailing corporate suffixes a member may add or leave off ("Inc.", "LLC"…)
+  var SUFFIXES = ["inc", "llc", "corp", "corporation", "co", "company", "ltd", "group"];
 
-  function slugify(name){ return name.toLowerCase().replace(/\s+/g,'-'); }
-
-  function checkMatch(){
-    var q = input.value.trim().toLowerCase();
-    noMatch.classList.remove('show');
-    if(!q){ current = null; input.classList.remove('matched'); badge.classList.remove('show'); resetCta(); return; }
-    var hit = COMPANIES[q] || Object.keys(COMPANIES).map(function(k){return COMPANIES[k];}).find(function(c){ return c.name.toLowerCase().indexOf(q) === 0; });
-    if(hit){
-      current = hit;
-      input.classList.add('matched');
-      input.style.setProperty('--accent-live', hit.accent);
-      badge.classList.add('show');
-      badge.style.setProperty('--tri-color', hit.accent);
-      matchLabel.textContent = hit.name;
-      cta.classList.add('matched');
-      cta.style.setProperty('--m-light', hit.accent);
-      cta.style.setProperty('--m-deep', hit.accentDeep);
-      cta.style.setProperty('--m-glow', hit.glow);
-    } else {
-      current = null;
-      input.classList.remove('matched');
-      badge.classList.remove('show');
-      resetCta();
-    }
+  // The comparison key: case, accents, punctuation and spacing are ignored, and
+  // so are trailing corporate suffixes. Keys are only ever compared for
+  // equality, so a partial or near-miss guess opens nothing.
+  function normalize(s){
+    var words = s.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase()
+      .replace(/[.'’]/g, '')                // "L.L.C." -> "llc", "Macy's" -> "macys"
+      .replace(/[^\p{L}\p{N}]+/gu, ' ')     // any other punctuation separates words
+      .trim().split(' ');
+    while(words.length > 1 && SUFFIXES.indexOf(words[words.length - 1]) !== -1) words.pop();
+    return words.join('');
   }
-  function resetCta(){
-    cta.classList.remove('matched');
-    cta.style.removeProperty('--m-light');
-    cta.style.removeProperty('--m-deep');
-    cta.style.removeProperty('--m-glow');
-  }
-
-  input.addEventListener('input', checkMatch);
-  input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); go(); } });
-  cta.addEventListener('click', go);
-  document.querySelectorAll('.no-match button').forEach(function(b){
-    b.addEventListener('click', function(){
-      var slug = b.getAttribute('data-slug');
-      var c = Object.keys(COMPANIES).map(function(k){return COMPANIES[k];}).find(function(x){return slugify(x.name)===slug;});
-      input.value = c.name; checkMatch();
-      input.focus(); // keep the keyboard loop alive: Enter now completes entry
-    });
+  // normalized name -> slug; prototype-free, so keys like "constructor" match nothing
+  var ROUTES = Object.create(null);
+  Object.keys(COMPANIES).forEach(function(slug){
+    COMPANIES[slug].forEach(function(name){ ROUTES[normalize(name)] = slug; });
   });
 
+  var input = document.getElementById('lookup');
+  var cta = document.getElementById('ctaBtn');
+  var noMatch = document.getElementById('noMatch');
+  var noMatchMsg = document.getElementById('noMatchMsg');
+  var wipe = document.getElementById('wipe');
+  var stub = document.querySelector('.card');
+
+  // Every miss gets the same static message — nothing about the guess shapes
+  // the response, so a near-miss and a total miss look and behave identically.
+  function showNoMatch(){
+    noMatch.textContent = '';
+    void noMatch.offsetWidth; // a repeat miss replays the entry and the alert
+    noMatch.appendChild(noMatchMsg.content.cloneNode(true));
+    input.setAttribute('aria-invalid', 'true');
+  }
+  function clearNoMatch(){
+    noMatch.textContent = '';
+    input.removeAttribute('aria-invalid');
+  }
+
+  input.addEventListener('input', clearNoMatch);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); go(); } });
+  cta.addEventListener('click', go);
+
   function go(){
-    var q = input.value.trim().toLowerCase();
+    var q = input.value.trim();
     if(!q){
       input.focus();
       if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -512,12 +478,8 @@
       }
       return;
     }
-    if(!current){
-      noMatchTerm.textContent = input.value.trim();
-      noMatch.classList.add('show');
-      return;
-    }
-    var slug = slugify(current.name);
+    var slug = ROUTES[normalize(q)];
+    if(!slug){ showNoMatch(); return; }
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     try{ sessionStorage.setItem('mvkArrive','1'); }catch(err){} // portal continues the wipe
     if(reduced){ window.location.href = slug + '.html'; return; }
@@ -525,6 +487,13 @@
     wipe.classList.add('active');
     setTimeout(function(){ window.location.href = slug + '.html'; }, 560);
   }
+
+  // Shared computers: Back can restore this page from the browser's cache, so
+  // clear what was typed on the way out and stand the stub back up on return.
+  window.addEventListener('pagehide', function(){ input.value = ''; clearNoMatch(); });
+  window.addEventListener('pageshow', function(e){
+    if(e.persisted){ stub.classList.remove('torn'); wipe.classList.remove('active'); }
+  });
 
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>

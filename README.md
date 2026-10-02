@@ -16,9 +16,12 @@ works opened directly via `file://`.
 1. Copy an existing tenant file to `<slug>.html` (slug = lowercased name with
    spaces as hyphens, e.g. `verita-global.html`) and swap the three tenant
    strings: `<title>`, the topbar crumb, the welcome headline.
-2. In `index.html`, add the employer to the `COMPANIES` map (full name plus any
-   short alias), add a suggestion button with `data-slug="<slug>"`, and extend
-   the lookup placeholder.
+2. In `index.html`, add the employer to the `COMPANIES` registry: its slug,
+   full name, and any approved aliases. That is the only place the name goes
+   on the landing page — never in the placeholder, the copy, or a suggestion
+   list: visitors must not be able to tell which employers take part. Members
+   match on a full name or alias (case, punctuation, spacing and suffixes like
+   Inc or LLC are ignored); partial names never open a portal.
 3. Register the file in `TENANTS` in `tests/tenant-parity.mjs` and in the
    default page list in `tests/receipt-check.mjs`, then run `npm test`.
 - `data/drug-prices.json` — weekly price catalog, refreshed by
@@ -26,12 +29,18 @@ works opened directly via `file://`.
 
 ## Tests
 
-`npm test` runs two suites:
+`npm test` runs three suites:
 
 **Tenant parity** — asserts every portal file is structurally identical to
 `alkeme.html`, differing by exactly the three tenant lines above (each must
 reduce to its reference counterpart under the tenant swap, with no other
 tenant's name appearing in the file).
+
+**Employer lookup** — no employer name appears in the landing page's text,
+placeholder, attributes or meta tags; typing changes nothing on the page;
+every miss shows the same neutral message; and only a full name or alias
+(any case, spacing, punctuation or corporate suffix) opens a portal. Names are
+read from the `COMPANIES` registry, so a new employer is covered automatically.
 
 **Lookup / receipt end-to-end** — 29 assertions per portal file, run in
 headless Chromium against both a local HTTP server and `file://`:
@@ -53,6 +62,6 @@ npx playwright install chromium   # only if Chromium isn't already in Playwright
 Run:
 
 ```sh
-npm test                    # both portal files
+npm test                    # all three suites, every portal file
 npm test -- alkeme.html     # a single file
 ```
