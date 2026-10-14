@@ -182,10 +182,13 @@
      The accent is its highlighter as well as its rule. The 1.26 leading is
      load-bearing: the caption hangs into it, and the welcome sentence wraps
      below the blank at every viewport width. */
-  .tname{position:relative;display:inline-block;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.01em;padding:0 .1em .02em;color:#fff;border-bottom:2.5px solid color-mix(in srgb, var(--accent) 45%, #fff);background:linear-gradient(180deg,transparent 68%,rgba(255,255,255,.16) 68%);}
+  .tname{display:block;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:-.01em;color:#fff;text-wrap:balance;margin:.04em 0 .12em;}
+  /* the ruled highlight follows each line of the name, so a long legal name
+     wraps as two filled-in lines instead of one stretched box */
+  .tname .tval{padding:0 .1em .02em;border-bottom:2.5px solid color-mix(in srgb, var(--accent) 45%, #fff);background:linear-gradient(180deg,transparent 68%,rgba(255,255,255,.16) 68%);-webkit-box-decoration-break:clone;box-decoration-break:clone;}
   /* decorative caption under the blank — a real element with aria-hidden,
      so every browser both shows it and keeps it out of the a11y tree */
-  .tname .tcap{position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);font-family:var(--font-mono);font-style:normal;font-weight:600;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb, var(--accent) 20%, #aab6c9);white-space:nowrap;}
+  .tname .tcap{display:block;margin:7px 0 0 .25em;line-height:1;font-family:var(--font-mono);font-style:normal;font-weight:600;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb, var(--accent) 20%, #aab6c9);white-space:nowrap;}
   /* trust items as the ticket's fine-print manifest — same rule as the landing */
   .a-chips{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:15px 2px;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);max-width:640px;}
   .a-chip{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#b9c4d6;}
@@ -608,7 +611,7 @@
     .crumb .co{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
     /* room for the employer caption when the name wraps mid-headline */
     .arrive h1{line-height:1.26;}
-    .tname .tcap{top:calc(100% + 3px);font-size:9px;}
+    .tname .tcap{font-size:9px;}
   }
 
   /* touch: the strength chips grow to a tappable size — placed after the
@@ -663,7 +666,7 @@
 
       <section class="arrive" aria-label="Member portal welcome">
         <p class="eyebrow reveal"><svg class="mark" aria-hidden="true"><use href="#mvk-mark"/></svg>Alkeme Rx Redirect</p>
-        <h1 class="reveal r2">Welcome, <span class="tname">Kamco Supply Corp of Boston<span class="tcap" aria-hidden="true">employer</span></span> members to your Alkeme Rx Redirect Member Portal.</h1>
+        <h1 class="reveal r2">Welcome, <span class="tname"><span class="tval">Kamco Supply Corp of Boston</span><span class="tcap" aria-hidden="true">employer</span></span> members to your Alkeme Rx Redirect Member Portal.</h1>
         <div class="a-chips reveal r3">
           <span class="a-chip"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>Full reimbursement</span>
           <span class="a-chip gold"><span class="ic"><svg viewBox="0 0 24 24"><path d="M20 12v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7S9 2 6 2a2.5 2.5 0 000 5h6z"/><path d="M12 7s3-5 6-5a2.5 2.5 0 010 5h-6z"/></svg></span>Savings Reward &mdash; up to $50 per fill</span>
