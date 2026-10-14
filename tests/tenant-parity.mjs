@@ -11,9 +11,10 @@ const REFERENCE = 'alkeme.html';
 // slug -> display name. Add a row here when a new employer portal is added,
 // and keep index.html's COMPANIES map in sync.
 const TENANTS = {
-  'alkeme.html': 'Alkeme',
+  'alkeme.html': 'Alkeme Intermediary Holdings, LLC',
   'acme-corporation.html': 'Acme Corporation',
   'verita-global.html': 'Verita Global',
+  'kamco-supply-corp-of-boston.html': 'Kamco Supply Corp of Boston',
 };
 
 let fail = 0;

@@ -5,8 +5,8 @@ reimbursement program administered by Maverick Administrators. Every page also
 works opened directly via `file://`.
 
 - `index.html` — employer lookup landing page
-- `alkeme.html` / `acme-corporation.html` / `verita-global.html` — tenant
-  portals. Structurally identical: only the `<title>`, the topbar company name,
+- `alkeme.html` / `acme-corporation.html` / `verita-global.html` /
+  `kamco-supply-corp-of-boston.html` — tenant portals. Structurally identical: only the `<title>`, the topbar company name,
   and the welcome headline differ. `alkeme.html` is the reference — edit it,
   then mirror those three strings into every other tenant file and confirm with
   a diff.
