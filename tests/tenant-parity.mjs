@@ -15,6 +15,7 @@ const TENANTS = {
   'acme-corporation.html': 'Acme Corporation',
   'verita-global.html': 'Verita Global',
   'kamco-supply-corp-of-boston.html': 'Kamco Supply Corp of Boston',
+  'sample-company.html': 'Sample Company',
 };
 
 let fail = 0;
