@@ -19,6 +19,7 @@ const TENANTS = {
   'verita-global.html': { name: 'Verita Global', legal: 'Verita Global' },
   'kamco-supply-corp-of-boston.html': { name: 'Kamco Supply Corp of Boston', legal: 'Kamco Supply Corp. of Boston' },
   'sample-company.html': { name: 'Sample Company', legal: 'Sample Company' },
+  'zampell-refractories.html': { name: 'Zampell Refractories, Inc.', legal: 'Zampell Refractories, Inc.' },
 };
 
 let fail = 0;

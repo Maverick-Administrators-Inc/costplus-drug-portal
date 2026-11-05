@@ -6,16 +6,20 @@ works opened directly via `file://`.
 
 - `index.html` — employer lookup landing page
 - `alkeme.html` / `acme-corporation.html` / `verita-global.html` /
-  `kamco-supply-corp-of-boston.html` / `sample-company.html` — tenant portals. Structurally identical: only the `<title>`, the topbar company name,
-  and the welcome headline differ. `alkeme.html` is the reference — edit it,
-  then mirror those three strings into every other tenant file and confirm with
-  a diff.
+  `kamco-supply-corp-of-boston.html` / `sample-company.html` /
+  `zampell-refractories.html` — tenant portals. Structurally identical: only
+  the `<title>`, the `employer-legal-name` meta (the legal name the Submit
+  chapter's copy chips put on the clipboard), the topbar company name, and the
+  welcome headline differ. `alkeme.html` is the reference — edit it, then
+  mirror those four strings into every other tenant file and confirm with a
+  diff.
 
 ### Adding an employer
 
 1. Copy an existing tenant file to `<slug>.html` (slug = lowercased name with
-   spaces as hyphens, e.g. `verita-global.html`) and swap the three tenant
-   strings: `<title>`, the topbar crumb, the welcome headline.
+   spaces as hyphens, e.g. `verita-global.html`) and swap the four tenant
+   strings: `<title>`, the `employer-legal-name` meta, the topbar crumb, the
+   welcome headline.
 2. In `index.html`, add the employer to the `COMPANIES` registry: its slug,
    full name, and any approved aliases. That is the only place the name goes
    on the landing page — never in the placeholder, the copy, or a suggestion
@@ -33,7 +37,7 @@ works opened directly via `file://`.
 `npm test` runs three suites:
 
 **Tenant parity** — asserts every portal file is structurally identical to
-`alkeme.html`, differing by exactly the three tenant lines above (each must
+`alkeme.html`, differing by exactly the four tenant lines above (each must
 reduce to its reference counterpart under the tenant swap, with no other
 tenant's name appearing in the file).
 
