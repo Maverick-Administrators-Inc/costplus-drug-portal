@@ -7,7 +7,8 @@ works opened directly via `file://`.
 - `index.html` — employer lookup landing page
 - `alkeme.html` / `acme-corporation.html` / `verita-global.html` /
   `kamco-supply-corp-of-boston.html` / `sample-company.html` /
-  `zampell-refractories.html` — tenant portals. Structurally identical: only
+  `zampell-refractories.html` / `juliano-group.html` / `coverys.html` — tenant
+  portals. Structurally identical: only
   the `<title>`, the `employer-legal-name` meta (the legal name the Submit
   chapter's copy chips put on the clipboard), the topbar company name, and the
   welcome headline differ. `alkeme.html` is the reference — edit it, then

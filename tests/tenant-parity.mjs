@@ -20,6 +20,8 @@ const TENANTS = {
   'kamco-supply-corp-of-boston.html': { name: 'Kamco Supply Corp of Boston', legal: 'Kamco Supply Corp. of Boston' },
   'sample-company.html': { name: 'Sample Company', legal: 'Sample Company' },
   'zampell-refractories.html': { name: 'Zampell Refractories, Inc.', legal: 'Zampell Refractories, Inc.' },
+  'juliano-group.html': { name: 'Juliano Group, Inc.', legal: 'Juliano Group, Inc.' },
+  'coverys.html': { name: 'Coverys', legal: 'Coverys' },
 };
 
 let fail = 0;
